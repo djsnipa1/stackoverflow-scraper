@@ -51,13 +51,13 @@ def to_markdown(link, file_handle):
 
     answer = post.find("div", {"class": "post-text"})
 
-    answer = replace_with_md("code", answer, "`", "`", "\n```python\n", "```\n")
+    answer = replace_with_md("code", answer, "`", "`", "\n```" + topic.lower() + "\n", "```\n")
     answer = replace_with_md("h2", answer, "\n### ", "\n")
 
     file_handle.write(remove_non_ascii(answer.text.strip()))
 
 
-topic = "Javascript"  #Topic to search for, also in title
+topic = "Python"  #Topic to search for, also in title
 page_size = 50       #Number of posts to scrape
 base_url = "https://stackoverflow.com"
 

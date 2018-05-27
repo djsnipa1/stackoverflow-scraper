@@ -3,7 +3,7 @@
 
 ## [Why is it faster to process a sorted array than an unsorted array?](https://stackoverflow.com/questions/11227809/why-is-it-faster-to-process-a-sorted-array-than-an-unsorted-array)
 
-**21298 Votes**, GManNickG
+**21299 Votes**, GManNickG
 
 You are a victim of branch prediction fail.
 
@@ -46,7 +46,7 @@ Further reading: "Branch predictor" article on Wikipedia.
 ### As hinted from above, the culprit is this if-statement:
 
 
-```python
+```c++
 if (data[c] >= 128)
     sum += data[c];
 ```
@@ -57,7 +57,7 @@ This is very friendly to the branch predictor since the branch consecutively goe
 Even a simple saturating counter will correctly predict the branch except for the few iterations after it switches direction.
 Quick visualization:
 
-```python
+```c++
 T = branch taken
 N = branch not taken
 
@@ -70,7 +70,7 @@ branch = N  N  N  N  N  ...   N    N    T    T    T  ...   T    T    T  ...
 However, when the data is completely random, the branch predictor is rendered useless because it can't predict random data.
 Thus there will probably be around 50% misprediction. (no better than random guessing)
 
-```python
+```c++
 data[] = 226, 185, 125, 158, 198, 144, 217, 79, 202, 118,  14, 150, 177, 182, 133, ...
 branch =   T,   T,   N,   T,   T,   T,   T,  N,   T,   N,   N,   T,   T,   T,   N  ...
 
@@ -82,14 +82,14 @@ So what can be done?
 If the compiler isn't able to optimize the branch into a conditional move, you can try some hacks if you are willing to sacrifice readability for performance.
 Replace:
 
-```python
+```c++
 if (data[c] >= 128)
     sum += data[c];
 ```
 
 with:
 
-```python
+```c++
 int t = (data[c] - 128) >> 31;
 sum += ~t & data[c];
 ```
@@ -99,7 +99,7 @@ This eliminates the branch and replaces it with some bitwise operations.
 Benchmarks: Core i7 920 @ 3.5 GHz
 C++ - Visual Studio 2010 - x64 Release
 
-```python
+```c++
 //  Branch - Random
 seconds = 11.777
 
@@ -115,7 +115,7 @@ seconds = 2.587
 
 Java - Netbeans 7.1.1 JDK 7 - x64
 
-```python
+```c++
 //  Branch - Random
 seconds = 10.93293813
 
@@ -154,7 +154,7 @@ This goes to show that even mature modern compilers can vary wildly in their abi
 The conditional's code decrements ``x, while returning ``x's original (not decremented) value, and then compares the original value with ``0 using the ``> operator.
 To better understand, the statement could be written as follows:
 
-```python
+```c++
 while( (x--) > 0 )
 ```
 
@@ -252,7 +252,7 @@ An updated version of this classic book that includes move semantics and the les
 
 For what it's worth, here's another way to extract tokens from an input string, relying only on standard library facilities. It's an example of the power and elegance behind the design of the STL.
 
-```python
+```c++
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -271,7 +271,7 @@ int main() {
 
 Instead of copying the extracted tokens to an output stream, one could insert them into a container, using the same generic `copy` algorithm.
 
-```python
+```c++
 vector<string> tokens;
 copy(istream_iterator<string>(iss),
      istream_iterator<string>(),
@@ -280,7 +280,7 @@ copy(istream_iterator<string>(iss),
 
 ... or create the `vector` directly:
 
-```python
+```c++
 vector<string> tokens{istream_iterator<string>{iss},
                       istream_iterator<string>{}};
 ```
@@ -291,7 +291,7 @@ vector<string> tokens{istream_iterator<string>{iss},
 
 A pointer can be re-assigned: 
 
-```python
+```c++
 int x = 5;
 int y = 6;
 int *p;
@@ -304,7 +304,7 @@ assert(y == 10);
 
 A reference cannot, and must be assigned at initialization:
 
-```python
+```c++
 int x = 5;
 int y = 6;
 int &r = x;
@@ -312,7 +312,7 @@ int &r = x;
 
 A pointer has its own memory address and size on the stack (4 bytes on x86), whereas a reference shares the same memory address (with the original variable) but also takes up some space on the stack.  Since a reference has the same address as the original variable itself, it is safe to think of a reference as another name for the same variable.  Note: What a pointer points to can be on the stack or heap.  Ditto a reference. My claim in this statement is not that a pointer must point to the stack.  A pointer is just a variable that holds a memory address.  This variable is on the stack.  Since a reference has its own space on the stack, and since the address is the same as the variable it references.  More on stack vs heap.  This implies that there is a real address of a reference that the compiler will not tell you. 
 
-```python
+```c++
 int x = 0;
 int &r = x;
 int *p = &x;
@@ -322,7 +322,7 @@ assert(p == p2);
 
 You can have pointers to pointers to pointers offering extra levels of indirection.  Whereas references only offer one level of indirection. 
 
-```python
+```c++
 int x = 0;
 int y = 0;
 int *p = &x;
@@ -336,7 +336,7 @@ assert(x == 0);
 
 Pointer can be assigned `nullptr` directly, whereas reference cannot. If you try hard enough, and you know how, you can make the address of a reference `nullptr`.  Likewise, if you try hard enough you can have a reference to a pointer, and then that reference can contain `nullptr`.
 
-```python
+```c++
 int *p = nullptr;
 int &r = nullptr; <--- compiling error
 int &r = *p;  <--- likely no compiling error, especially if the nullptr is hidden behind a function call, yet it refers to a non-existent int at address 0
@@ -348,7 +348,7 @@ A pointer is a variable that holds a memory address.  Regardless of how a refere
 References cannot be stuffed into an array, whereas pointers can be (Mentioned by user @litb)
 Const references can be bound to temporaries. Pointers cannot (not without some indirection):
 
-```python
+```c++
 const int &x = int(12); //legal C++
 int *y = &int(12); //illegal to dereference a temporary.
 ```
@@ -362,7 +362,7 @@ This makes `const&` safer for use in argument lists and so forth.
 The compiler is allowed to make one implicit conversion to resolve the parameters to a function. What this means is that the compiler can use constructors callable with a single parameter to convert from one type to another in order to get the right type for a parameter. 
 Here's an example class with a constructor that can be used for implicit conversions:
 
-```python
+```c++
 class Foo
 {
 public:
@@ -380,7 +380,7 @@ private:
 
 Here's a simple function that takes a `Foo` object:
 
-```python
+```c++
 void DoBar (Foo foo)
 {
   int i = foo.GetFoo ();
@@ -389,7 +389,7 @@ void DoBar (Foo foo)
 
 and here's where the `DoBar` function is called.
 
-```python
+```c++
 int main ()
 {
   DoBar (42);
@@ -436,7 +436,7 @@ C-style casts also ignore access control when performing a `static_cast`, which 
 Setting a bit
 Use the bitwise OR operator (``|) to set a bit.
 
-```python
+```c++
 number |= 1UL << x;
 ```
 
@@ -445,7 +445,7 @@ Use `1ULL` if `number` is wider than `unsigned long`; promotion of `1UL << x` do
 Clearing a bit
 Use the bitwise AND operator (``&) to clear a bit.
 
-```python
+```c++
 number &= ~(1UL << x);
 ```
 
@@ -453,7 +453,7 @@ That will clear bit ``x. You must invert the bit string with the bitwise NOT ope
 Toggling a bit
 The XOR operator (``^) can be used to toggle a bit.
 
-```python
+```c++
 number ^= 1UL << x;
 ```
 
@@ -462,7 +462,7 @@ Checking a bit
 You didn't ask for this, but I might as well add it.
 To check a bit, shift the number x to the right, then bitwise AND it:
 
-```python
+```c++
 bit = (number >> x) & 1U;
 ```
 
@@ -470,20 +470,20 @@ That will put the value of bit ``x into the variable `bit`.
 Changing the nth bit to x
 Setting the ``nth bit to either ``1 or ``0 can be achieved with the following on a 2's complement C++ implementation:
 
-```python
+```c++
 number ^= (-x ^ number) & (1UL << n);
 ```
 
 Bit ``n will be set if ``x is ``1, and cleared if ``x is ``0.  If ``x has some other value, you get garbage.  `x = !!x` will booleanize it to 0 or 1.
 To make this independent of 2's complement negation behaviour (where `-1` has all bits set, unlike on a 1's complement or sign/magnitude C++ implementation), use unsigned negation.
 
-```python
+```c++
 number ^= (-(unsigned long)x ^ number) & (1UL << n);
 ```
 
 or
 
-```python
+```c++
 unsigned long newbit = !!x;    // Also booleanize to force 0 or 1
 number ^= (-newbit ^ number) & (1UL << n);
 ```
@@ -497,7 +497,7 @@ It's also generally a good idea to not to copy/paste code in general and so many
 
 This is not related to performance at all. But consider this: you are using two libraries called Foo and Bar:
 
-```python
+```c++
 using namespace foo;
 using namespace bar;
 ```
@@ -516,7 +516,7 @@ EDIT : It does in fact look like you are allocating all the arrays separately.
 Usually when such large allocations are requested, the allocator will request fresh pages from the OS. Therefore, there is a high chance that large allocations will appear at the same offset from a page-boundary.
 Here's the test code:
 
-```python
+```c++
 int main(){
     const int n = 100000;
 
@@ -578,7 +578,7 @@ Benchmark Results:
 EDIT: Results on an actual Core 2 architecture machine:
 2 x Intel Xeon X5482 Harpertown @ 3.2 GHz:
 
-```python
+```c++
 #define ALLOCATE_SEPERATE
 #define ONE_LOOP
 00600020
@@ -646,7 +646,7 @@ Most of the work in overloading operators is boiler-plate code. That is little w
 
 There's a lot to be said about assignment. However, most of it has already been said in GMan's famous Copy-And-Swap FAQ, so I'll skip most of it here, only listing the perfect assignment operator for reference:
 
-```python
+```c++
 X& X::operator=(X rhs)
 {
   swap(rhs);
@@ -662,7 +662,7 @@ The stream operators, among the most commonly overloaded operators, are binary i
 Since they change their left argument (they alter the streams state), they should, according to the rules of thumb, be implemented as members of their left operands type. However, their left operands are streams from the standard library, and while most of the stream output and input operators defined by the standard library are indeed defined as members of the stream classes, when you implement output and input operations for your own types, you cannot change the standard librarys stream types. Thats why you need to implement these operators for your own types as non-member functions.
 The canonical forms of the two are these:
 
-```python
+```c++
 std::ostream& operator<<(std::ostream& os, const T& obj)
 {
   // write obj to stream
@@ -688,7 +688,7 @@ When implementing `operator>>`, manually setting the streams state is only neces
 The function call operator, used to create function objects, also known as functors, must be defined as a member function, so it always has the implicit `this` argument of member functions. Other than this it can be overloaded to take any number of additional arguments, including zero.
 Here's an example of the syntax:
 
-```python
+```c++
 class foo {
 public:
     // Overloaded call operator
@@ -700,7 +700,7 @@ public:
 
 Usage:
 
-```python
+```c++
 foo f;
 int a = f("hello");
 ```
@@ -712,7 +712,7 @@ Throughout the C++ standard library, function objects are always copied. Your ow
 The binary infix comparison operators should, according to the rules of thumb, be implemented as non-member functions1. The unary prefix negation ``! should (according to the same rules) be implemented as a member function. (but it is usually not a good idea to overload it.)
 The standard librarys algorithms (e.g. `std::sort()`) and types (e.g. `std::map`) will always only expect `operator<` to be present. However, the users of your type will expect all the other operators to be present, too, so if you define `operator<`, be sure to follow the third fundamental rule of operator overloading and also define all the other boolean comparison operators. The canonical way to implement them is this:
 
-```python
+```c++
 inline bool operator==(const X& lhs, const X& rhs){ /* do actual comparison */ }
 inline bool operator!=(const X& lhs, const X& rhs){return !operator==(lhs,rhs);}
 inline bool operator< (const X& lhs, const X& rhs){ /* do actual comparison */ }
@@ -725,7 +725,7 @@ The important thing to note here is that only two of these operators actually do
 The syntax for overloading the remaining binary boolean operators (`||`, `&&`) follows the rules of the comparison operators. However, it is very unlikely that you would find a reasonable use case for these2.
 1 As with all rules of thumb, sometimes there might be reasons to break this one, too. If so, do not forget that the left-hand operand of the binary comparison operators, which for member functions will be `*this`, needs to be `const`, too. So a comparison operator implemented as a member function would have to have this signature:
 
-```python
+```c++
 bool operator<(const X& rhs) const { /* do actual comparison with *this */ }
 ```
 
@@ -738,7 +738,7 @@ Unary arithmetic operators
 The unary increment and decrement operators come in both prefix and postfix flavor. To tell one from the other, the postfix variants take an additional dummy int argument. If you overload increment or decrement, be sure to always implement both prefix and postfix versions.
 Here is the canonical implementation of increment, decrement follows the same rules:
 
-```python
+```c++
 class X {
   X& operator++()
   {
@@ -761,7 +761,7 @@ Binary arithmetic operators
 For the binary arithmetic operators, do not forget to obey the third basic rule operator overloading: If you provide ``+, also provide `+=`, if you provide ``-, do not omit `-=`, etc. Andrew Koenig is said to have been the first to observe that the compound assignment operators can be used as a base for their non-compound counterparts. That is, operator ``+ is implemented in terms of `+=`, ``- is implemented in terms of `-=` etc.
 According to our rules of thumb, ``+ and its companions should be non-members, while their compound assignment counterparts (`+=` etc.), changing their left argument, should be a member. Here is the exemplary code for `+=` and ``+, the other binary arithmetic operators should be implemented in the same way:
 
-```python
+```c++
 class X {
   X& operator+=(const X& rhs)
   {
@@ -786,7 +786,7 @@ The bit manipulation operators ``~ ``& ``| ``^ `<<` `>>` should be implemented i
 The array subscript operator is a binary operator which must be implemented as a class member. It is used for container-like types that allow access to their data elements by a key.
 The canonical form of providing these is this:
 
-```python
+```c++
 class X {
         value_type& operator[](index_type idx);
   const value_type& operator[](index_type idx) const;
@@ -801,7 +801,7 @@ If value_type is known to refer to a built-in type, the const variant of the ope
 
 For defining your own iterators or smart pointers, you have to overload the unary prefix dereference operator ``* and the binary infix pointer member access operator `->`:
 
-```python
+```c++
 class my_ptr {
         value_type& operator*();
   const value_type& operator*() const;
@@ -827,7 +827,7 @@ This means that objects are implicitly copied in various contexts,
 and we should understand what "copying an object" actually means.
 Let us consider a simple example:
 
-```python
+```c++
 class person
 {
     std::string name;
@@ -880,7 +880,7 @@ The implicitly-defined copy assignment operator for a non-union class X performs
 
 The implicitly-defined special member functions for `person` look like this:
 
-```python
+```c++
 // 1. copy constructor
 person(const person& that) : name(that.name), age(that.age)
 {
@@ -920,7 +920,7 @@ Let us go back in time to pre-standard C++.
 There was no such thing as `std::string`, and programmers were in love with pointers.
 The `person` class might have looked like this:
 
-```python
+```c++
 class person
 {
     char* name;
@@ -962,7 +962,7 @@ sooner or later you will get memory leaks all over the place.
 
 Since memberwise copying does not have the desired effect, we must define the copy constructor and the copy assignment operator explicitly to make deep copies of the character array:
 
-```python
+```c++
 // 1. copy constructor
 person(const person& that)
 {
@@ -1000,7 +1000,7 @@ because when you write `x = x`, both `this->name` and `that.name` contain the sa
 Unfortunately, this solution will fail if `new char[...]` throws an exception due to memory exhaustion.
 One possible solution is to introduce a local variable and reorder the statements:
 
-```python
+```c++
 // 2. copy assignment operator
 person& operator=(const person& that)
 {
@@ -1026,7 +1026,7 @@ I only mentioned exceptions to make the following point: Writing classes that ma
 Some resources cannot or should not be copied, such as file handles or mutexes.
 In that case, simply declare the copy constructor and copy assignment operator as `private` without giving a definition:
 
-```python
+```c++
 private:
 
     person(const person& that);
@@ -1035,7 +1035,7 @@ private:
 
 Alternatively, you can inherit from `boost::noncopyable` or declare them as deleted (C++0x):
 
-```python
+```c++
 person(const person& that) = delete;
 person& operator=(const person& that) = delete;
 ```
@@ -1090,7 +1090,7 @@ A swap function is a non-throwing function that swaps two objects of a class, me
 The goal
 Let's consider a concrete case. We want to manage, in an otherwise useless class, a dynamic array. We start with a working constructor, copy-constructor, and destructor:
 
-```python
+```c++
 #include <algorithm> // std::copy
 #include <cstddef> // std::size_t
 
@@ -1131,7 +1131,7 @@ This class almost manages the array successfully, but it needs `operator=` to wo
 A failed solution
 Here's how a naive implementation might look:
 
-```python
+```c++
 // the hard part
 dumb_array& operator=(const dumb_array& other)
 {
@@ -1156,7 +1156,7 @@ And we say we're finished; this now manages an array, without leaks. However, it
 The first  is the self-assignment test. This check serves two purposes: it's an easy way to prevent us from running needless code on self-assignment, and it protects us from subtle bugs (such as deleting the array only to try and copy it). But in all other cases it merely serves to slow the program down, and act as noise in the code; self-assignment rarely occurs, so most of the time this check is a waste. It would be better if the operator could work properly without it.
 The second is that it only provides a basic exception guarantee. If `new int[mSize]` fails, `*this` will have been modified. (Namely, the size is wrong and the data is gone!) For a strong exception guarantee, it would need to be something akin to:
 
-```python
+```c++
 dumb_array& operator=(const dumb_array& other)
 {
     if (this != &other) // (1)
@@ -1184,7 +1184,7 @@ A successful solution
 As mentioned, the copy-and-swap idiom will fix all these issues. But right now, we have all the requirements except one: a `swap` function. While The Rule of Three successfully entails the existence of our copy-constructor, assignment operator, and destructor, it should really be called "The Big Three and A Half": any time your class manages a resource it also makes sense to provide a `swap` function.
 We need to add swap functionality to our class, and we do that as follows:
 
-```python
+```c++
 class dumb_array
 {
 public:
@@ -1208,7 +1208,7 @@ public:
 (Here is the explanation why `public friend swap`.) Now not only can we swap our `dumb_array`'s, but swaps in general can be more efficient; it merely swaps pointers and sizes, rather than allocating and copying entire arrays. Aside from this bonus in functionality and efficiency, we are now ready to implement the copy-and-swap idiom.
 Without further ado, our assignment operator is:
 
-```python
+```c++
 dumb_array& operator=(dumb_array other) // (1)
 {
     swap(*this, other); // (2)
@@ -1221,7 +1221,7 @@ And that's it! With one fell swoop, all three problems are elegantly tackled at 
 Why does it work?
 We first notice an important choice: the parameter argument is taken by-value. While one could just as easily do the following (and indeed, many naive implementations of the idiom do):
 
-```python
+```c++
 dumb_array& operator=(const dumb_array& other)
 {
     dumb_array temp(other);
@@ -1243,7 +1243,7 @@ And that is the copy-and-swap idiom.
 The next version of C++, C++11, makes one very important change to how we manage resources: the Rule of Three is now The Rule of Four (and a half). Why? Because not only do we need to be able to copy-construct our resource, we need to move-construct it as well.
 Luckily for us, this is easy:
 
-```python
+```c++
 class dumb_array
 {
 public:
@@ -1266,7 +1266,7 @@ So what we've done is simple: initialize via the default constructor (a C++11 fe
 Why does that work?
 That is the only change we need to make to our class, so why does it work? Remember the ever-important decision we made to make the parameter a value and not a reference:
 
-```python
+```c++
 dumb_array& operator=(dumb_array other); // (1)
 ```
 
@@ -1302,7 +1302,7 @@ Of course, you can write multi-threaded code in practice for particular concrete
 The abstract machine in C++11 is multi-threaded by design.  It also has a well-defined memory model; that is, it says what the compiler may and may not do when it comes to accessing memory.
 Consider the following example, where a pair of global variables are accessed concurrently by two threads:
 
-```python
+```c++
            Global
            int x, y;
 
@@ -1316,7 +1316,7 @@ Under C++98/C++03, this is not even Undefined Behavior; the question itself is m
 Under C++11, the result is Undefined Behavior, because loads and stores need not be atomic in general.  Which may not seem like much of an improvement...  And by itself, it's not.
 But with C++11, you can write this:
 
-```python
+```c++
            Global
            atomic<int> x, y;
 
@@ -1329,7 +1329,7 @@ Now things get much more interesting.  First of all, the behavior here is define
 What it cannot print is `37 0`, because the default mode for atomic loads/stores in C++11 is to enforce sequential consistency.  This just means all loads and stores must be "as if" they happened in the order you wrote them within each thread, while operations among threads can be interleaved however the system likes.  So the default behavior of atomics provides both atomicity and ordering for loads and stores.
 Now, on a modern CPU, ensuring sequential consistency can be expensive.  In particular, the compiler is likely to emit full-blown memory barriers between every access here.  But if your algorithm can tolerate out-of-order loads and stores; i.e., if it requires atomicity but not ordering; i.e., if it can tolerate `37 0` as output from this program, then you can write this:
 
-```python
+```c++
            Global
            atomic<int> x, y;
 
@@ -1341,7 +1341,7 @@ y.store(37,memory_order_relaxed);   cout << x.load(memory_order_relaxed) << endl
 The more modern the CPU, the more likely this is to be faster than the previous example.
 Finally, if you just need to keep particular loads and stores in order, you can write:
 
-```python
+```c++
            Global
            atomic<int> x, y;
 
@@ -1384,7 +1384,7 @@ That is natural, but you can be sure if it finds a problem it is real, and vice-
 ADDED: Let me make a Bayesian explanation of how it works.  Suppose there is some instruction ``I (call or otherwise) which is on the call stack some fraction ``f of the time (and thus costs that much). For simplicity, suppose we don't know what ``f is, but assume it is either 0.1, 0.2, 0.3, ... 0.9, 1.0, and the prior probability of each of these possibilities is 0.1, so all of these costs are equally likely a-priori.
 Then suppose we take just 2 stack samples, and we see instruction ``I on both samples, designated observation `o=2/2`. This gives us new estimates of the frequency ``f of ``I, according to this:
 
-```python
+```c++
 Prior                                    
 P(f=x) x  P(o=2/2|f=x) P(o=2/2&&f=x)  P(o=2/2&&f >= x)  P(f >= x)
 
@@ -1405,7 +1405,7 @@ P(f=x) x  P(o=2/2|f=x) P(o=2/2&&f=x)  P(o=2/2&&f >= x)  P(f >= x)
 The last column says that, for example, the probability that ``f >= 0.5 is 92%, up from the prior assumption of 60%.
 Suppose the prior assumptions are different. Suppose we assume P(f=0.1) is .991 (nearly certain), and all the other possibilities are almost impossible (0.001). In other words, our prior certainty is that ``I is cheap. Then we get:
 
-```python
+```c++
 Prior                                    
 P(f=x) x  P(o=2/2|f=x) P(o=2/2&& f=x)  P(o=2/2&&f >= x)  P(f >= x)
 
@@ -1449,7 +1449,7 @@ That's what makes the difference - seeing the whole reason for the time being sp
 
 `static_cast` is used for cases where you basically want to reverse an implicit conversion, with a few restrictions and additions. `static_cast` performs no runtime checks. This should be used if you know that you refer to an object of a specific type, and thus a check would be unnecessary. Example:
 
-```python
+```c++
 void func(void *data) {
   // Conversion from MyClass* -> void* is implicit
   MyClass *c = static_cast<MyClass*>(data);
@@ -1469,7 +1469,7 @@ In this example, you know that you passed a `MyClass` object, and thus there isn
 
 `dynamic_cast` is useful when you don't know what the dynamic type of the object is. It returns a null pointer if the object referred to doesn't contain the type casted to as a base class (when you cast to a reference, a `bad_cast` exception is thrown in that case).
 
-```python
+```c++
 if (JumpStm *j = dynamic_cast<JumpStm*>(&stm)) {
   ...
 } else if (ExprStm *e = dynamic_cast<ExprStm*>(&stm)) {
@@ -1479,7 +1479,7 @@ if (JumpStm *j = dynamic_cast<JumpStm*>(&stm)) {
 
 You cannot use `dynamic_cast` if you downcast (cast to a derived class) and the argument type is not polymorphic. For example, the following code is not valid, because `Base` doesn't contain any virtual function:
 
-```python
+```c++
 struct Base { };
 struct Derived : Base { };
 int main() {
@@ -1504,7 +1504,7 @@ A smart pointer is a class that wraps a 'raw' (or 'bare') C++ pointer, to manage
 Smart pointers should be preferred over raw pointers. If you feel you need to use pointers (first consider if you really do), you would normally want to use a smart pointer as this can alleviate many of the problems with raw pointers, mainly forgetting to delete the object and leaking memory.
 With raw pointers, the programmer has to explicitly destroy the object when it is no longer useful.
 
-```python
+```c++
 // Need to create the object to achieve some goal
 MyObject* ptr = new MyObject(); 
 ptr->DoSomething(); // Use the object in some way
@@ -1514,7 +1514,7 @@ delete ptr; // Destroy the object. Done with it.
 
 A smart pointer by comparison defines a policy as to when the object is destroyed. You still have to create the object, but you no longer have to worry about destroying it.
 
-```python
+```c++
 SomeSmartPtr<MyObject> ptr(new MyObject());
 ptr->DoSomething(); // Use the object in some way.
 
@@ -1527,7 +1527,7 @@ ptr->DoSomething(); // Use the object in some way.
 
 The simplest policy in use involves the scope of the smart pointer wrapper object, such as implemented by `boost::scoped_ptr` or `std::unique_ptr`. 
 
-```python
+```c++
 void f()
 {
     {
@@ -1545,7 +1545,7 @@ Note that `scoped_ptr` instances cannot be copied. This prevents the pointer fro
 Scoped pointers are useful when you want to tie the lifetime of the object to a particular block of code, or if you embedded it as member data inside another object, the lifetime of that other object. The object exists until the containing block of code is exited, or until the containing object is itself destroyed.
 A more complex smart pointer policy involves reference counting the pointer. This does allow the pointer to be copied. When the last "reference" to the object is destroyed, the object is deleted. This policy is implemented by `boost::shared_ptr` and `std::shared_ptr`.
 
-```python
+```c++
 void f()
 {
     typedef std::shared_ptr<MyObject> MyObjectPtr; // nice short alias
@@ -1564,7 +1564,7 @@ void f()
 Reference counted pointers are very useful when the lifetime of your object is much more complicated, and is not tied directly to a particular section of code or to another object.
 There is one drawback to reference counted pointers  the possibility of creating a dangling reference:
 
-```python
+```c++
 // Create the smart pointer on the heap
 MyObjectPtr* pp = new MyObjectPtr(new MyObject())
 // Hmm, we forgot to destroy the smart pointer,
@@ -1573,7 +1573,7 @@ MyObjectPtr* pp = new MyObjectPtr(new MyObject())
 
 Another possibility is creating circular references:
 
-```python
+```c++
 struct Owner {
    boost::shared_ptr<Owner> other;
 };
@@ -1593,7 +1593,7 @@ UPDATE
 This answer is rather old, and so describes what was 'good' at the time, which was smart pointers provided by the Boost library. Since C++11, the standard library has provided sufficient smart pointers types, and so you should favour the use of `std::unique_ptr`, `std::shared_ptr` and `std::weak_ptr`. 
 There is also `std::auto_ptr`. It is very much like a scoped pointer, except that it also has the "special" dangerous ability to be copied  which also unexpectedly transfers ownership! It is deprecated in the newest standards, so you shouldn't use it. Use the `std::unique_ptr` instead.
 
-```python
+```c++
 std::auto_ptr<MyObject> p1 (new MyObject());
 std::auto_ptr<MyObject> p2 = p1; // Copy and transfer ownership. 
                                  // p1 gets set to empty!
@@ -1607,13 +1607,13 @@ p1->DoSomething(); // Oh oh. Hopefully raises some NULL pointer exception.
 
 By default, `cin` is synchronized with stdio, which causes it to avoid any input buffering.  If you add this to the top of your main, you should see much better performance:
 
-```python
+```c++
 std::ios_base::sync_with_stdio(false);
 ```
 
 Normally, when an input stream is buffered, instead of reading one character at a time, the stream will be read in larger chunks.  This reduces the number of system calls, which are typically relatively expensive.  However, since the `FILE*` based `stdio` and `iostreams` often have separate implementations and therefore separate buffers, this could lead to a problem if both were used together.  For example:
 
-```python
+```c++
 int myvalue1;
 cin >> myvalue1;
 int myvalue2;
@@ -1660,7 +1660,7 @@ And a `Jcc` (jump) instruction, depending on the comparison type (and code layou
 
 Example (Edited for brevity) Compiled with `$ gcc -m32 -S -masm=intel test.c`
 
-```python
+```c++
     if (a < b) {
         // Do something 1
     }
@@ -1668,7 +1668,7 @@ Example (Edited for brevity) Compiled with `$ gcc -m32 -S -masm=intel test.c`
 
 Compiles to:
 
-```python
+```c++
     mov     eax, DWORD PTR [esp+24]      ; a
     cmp     eax, DWORD PTR [esp+28]      ; b
     jge     .L2                          ; jump if a is >= b
@@ -1678,7 +1678,7 @@ Compiles to:
 
 And
 
-```python
+```c++
     if (a <= b) {
         // Do something 2
     }
@@ -1686,7 +1686,7 @@ And
 
 Compiles to:
 
-```python
+```c++
     mov     eax, DWORD PTR [esp+24]      ; a
     cmp     eax, DWORD PTR [esp+28]      ; b
     jg      .L5                          ; jump if a is > b
@@ -1708,7 +1708,7 @@ Throughput  The number of clock cycles required to
 
 The values for `Jcc` are:
 
-```python
+```c++
       Latency   Throughput
 Jcc     N/A        0.5
 ```
@@ -1723,7 +1723,7 @@ If one thinks about the actual circuitry used to implement the instructions, one
 Edit: Floating Point
 This holds true for x87 floating point as well:  (Pretty much same code as above, but with `double` instead of `int`.)
 
-```python
+```c++
         fld     QWORD PTR [esp+32]
         fld     QWORD PTR [esp+40]
         fucomip st, st(1)              ; Compare ST(0) and ST(1), and set CF, PF, ZF in EFLAGS
@@ -1756,7 +1756,7 @@ Denormal (or subnormal) numbers are kind of a hack to get some extra values very
 If you print out the numbers after 10,000 iterations, you will see that they have converged to different values depending on whether ``0 or `0.1` is used.
 Here's the test code compiled on x64:
 
-```python
+```c++
 int main() {
 
     double start = omp_get_wtime();
@@ -1799,7 +1799,7 @@ int main() {
 
 Output:
 
-```python
+```c++
 #define FLOATING
 1.78814e-007  1.3411e-007  1.04308e-007  0  7.45058e-008  6.70552e-008  6.70552e-008  5.58794e-007  3.05474e-007  2.16067e-007  1.71363e-007  1.49012e-007  1.2666e-007  1.11759e-007  1.04308e-007  1.04308e-007
 1.78814e-007  1.3411e-007  1.04308e-007  0  7.45058e-008  6.70552e-008  6.70552e-008  5.58794e-007  3.05474e-007  2.16067e-007  1.71363e-007  1.49012e-007  1.2666e-007  1.11759e-007  1.04308e-007  1.04308e-007
@@ -1814,7 +1814,7 @@ Denormalized numbers are generally rare and thus most processors don't try to ha
 
 To demonstrate that this has everything to do with denormalized numbers, if we flush denormals to zero by adding this to the start of the code:
 
-```python
+```c++
 _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
 ```
 
@@ -1822,7 +1822,7 @@ Then the version with ``0 is no longer 10x slower and actually becomes faster. (
 This means that rather than using these weird lower precision almost-zero values, we just round to zero instead.
 Timings: Core i7 920 @ 3.5 GHz:
 
-```python
+```c++
 //  Don't flush denormals to zero.
 0.1f: 0.564067
 0   : 26.7669
@@ -1841,7 +1841,7 @@ In the end, this really has nothing to do with whether it's an integer or floati
 It is not necessary to put the implementation in the header file, see the alternative solution at the end of this answer.
 Anyway, the reason your code is failing is that, when instantiating a template, the compiler creates a new class with the given template argument. For example:
 
-```python
+```c++
 template<typename T>
 struct Foo
 {
@@ -1855,7 +1855,7 @@ Foo<int> f;
 
 When reading this line, the compiler will create a new class (let's call it `FooInt`), which is equivalent to the following:
 
-```python
+```c++
 struct FooInt
 {
     int bar;
@@ -1866,7 +1866,7 @@ struct FooInt
 Consequently, the compiler needs to have access to the implementation of the methods, to instantiate them with the template argument (in this case `int`). If these implementations were not in the header, they wouldn't be accessible, and therefore the compiler wouldn't be able to instantiate the template.
 A common solution to this is to write the template declaration in a header file, then implement the class in an implementation file (for example .tpp), and include this implementation file at the end of the header.
 
-```python
+```c++
 // Foo.h
 template <typename T>
 struct Foo
@@ -1887,7 +1887,7 @@ void Foo<T>::doSomething(T param)
 This way, implementation is still separated from declaration, but is accessible to the compiler.
 Another solution is to keep the implementation separated, and explicitly instantiate all the template instances you'll need:
 
-```python
+```c++
 // Foo.h
 
 // no implementation
@@ -1912,7 +1912,7 @@ If my explanation isn't clear enough, you can have a look at the C++ Super-FAQ o
 
 I find it easiest to understand move semantics with example code. Let's start with a very simple string class which only holds a pointer to a heap-allocated block of memory:
 
-```python
+```c++
 #include <cstring>
 #include <algorithm>
 
@@ -1932,7 +1932,7 @@ public:
 
 Since we chose to manage the memory ourselves, we need to follow the rule of three. I am going to defer writing the assignment operator and only implement the destructor and the copy constructor for now:
 
-```python
+```c++
     ~string()
     {
         delete[] data;
@@ -1948,7 +1948,7 @@ Since we chose to manage the memory ourselves, we need to follow the rule of thr
 
 The copy constructor defines what it means to copy string objects. The parameter `const string& that` binds to all expressions of type string which allows you to make copies in the following examples:
 
-```python
+```c++
 string a(x);                                    // Line 1
 string b(x + y);                                // Line 2
 string c(some_function_returning_a_string());   // Line 3
@@ -1960,7 +1960,7 @@ rvalues denote temporary objects which are destroyed at the next semicolon (to b
 C++0x introduces a new mechanism called "rvalue reference" which, among other things,
 allows us to detect rvalue arguments via function overloading. All we have to do is write a constructor with an rvalue reference parameter. Inside that constructor we can do anything we want with the source, as long as we leave it in some valid state:
 
-```python
+```c++
     string(string&& that)   // string&& is an rvalue reference to a string
     {
         data = that.data;
@@ -1971,7 +1971,7 @@ allows us to detect rvalue arguments via function overloading. All we have to do
 What have we done here? Instead of deeply copying the heap data, we have just copied the pointer and then set the original pointer to null. In effect, we have "stolen" the data that originally belonged to the source string. Again, the key insight is that under no circumstance could the client detect that the source had been modified. Since we don't really do a copy here, we call this constructor a "move constructor". Its job is to move resources from one object to another instead of copying them.
 Congratulations, you now understand the basics of move semantics! Let's continue by implementing the assignment operator. If you're unfamiliar with the copy and swap idiom, learn it and come back, because it's an awesome C++ idiom related to exception safety.
 
-```python
+```c++
     string& operator=(string that)
     {
         std::swap(data, that.data);
@@ -2062,7 +2062,7 @@ extern "C" makes a function-name in C++ have 'C' linkage (compiler does not mang
 Since C++ has overloading of function names and C does not, the C++ compiler cannot just use the function name as a unique id to link to, so it mangles the name by adding information about the arguments.  A C compiler does not need to mangle the name since you can not overload function names in C.  When you state that a function has extern "C" linkage in C++, the C++ compiler does not add argument/parameter type information to the name used for linkage.
 Just so you know, you can specify "C" linkage to each individual declaration/definition explicitly or use a block to group a sequence of declarations/definitions to have a certain linkage:
 
-```python
+```c++
 extern "C" void foo(int);
 extern "C"
 {
@@ -2090,7 +2090,7 @@ Linkage from C++ to objects defined in other languages and to objects defined in
 
 C++11 introduces `std::stoi` (and variants for each numeric type) and `std::to_string`, the counterparts of the C `atoi` and `itoa` but expressed in term of `std::string`.
 
-```python
+```c++
 #include <string> 
 
 std::string s = std::to_string(42);
@@ -2098,7 +2098,7 @@ std::string s = std::to_string(42);
 
 is therefore the shortest way I can think of. You can even omit naming the type, using the `auto` keyword:
 
-```python
+```c++
 auto s = std::to_string(42);
 ```
 
@@ -2110,7 +2110,7 @@ Note: see [string.conversions] (21.5 in n3242)
 
 Virtual destructors are useful when you can delete an instance of a derived class through a pointer to base class:
 
-```python
+```c++
 class Base 
 {
     // some virtual methods
@@ -2127,7 +2127,7 @@ class Derived : public Base
 
 Here, you'll notice that I didn't declare Base's destructor to be `virtual`. Now, let's have a look at the following snippet:
 
-```python
+```c++
 Base *b = new Derived();
 // use b
 delete b; // Here's the problem!
@@ -2183,7 +2183,7 @@ Similar mechanisms exist for other compilers/ platforms.
 Common error messages are `error LNK2001`, `error LNK1120`, `error LNK2019` for Microsoft Visual Studio and `undefined reference to` symbolName for GCC.
 The code:
 
-```python
+```c++
 struct X
 {
    virtual void foo();
@@ -2213,7 +2213,7 @@ int main()
 
 will generate the following errors with GCC:
 
-```python
+```c++
 /home/AbiSfw/ccvvuHoX.o: In function `main':
 prog.cpp:(.text+0x10): undefined reference to `x'
 prog.cpp:(.text+0x19): undefined reference to `foo()'
@@ -2229,7 +2229,7 @@ collect2: ld returned 1 exit status
 
 and similar errors with Microsoft Visual Studio:
 
-```python
+```c++
 1>test2.obj : error LNK2001: unresolved external symbol "void __cdecl foo(void)" (?foo@@YAXXZ)
 1>test2.obj : error LNK2001: unresolved external symbol "int x" (?x@@3HA)
 1>test2.obj : error LNK2001: unresolved external symbol "public: virtual __thiscall A::~A(void)" (??1A@@UAE@XZ)
@@ -2260,7 +2260,7 @@ Inconsistent `UNICODE` definitions
 The problem
 C++ includes useful generic functions like `std::for_each` and `std::transform`, which can be very handy. Unfortunately they can also be quite cumbersome to use, particularly if the functor you would like to apply is unique to the particular function.
 
-```python
+```c++
 #include <algorithm>
 #include <vector>
 
@@ -2281,7 +2281,7 @@ void func(std::vector<int>& v) {
 If you only use f once and in that specific place it seems overkill to be writing a whole class just to do something trivial and one off.
 In C++03 you might be tempted to write something like the following, to keep the functor local:
 
-```python
+```c++
 void func2(std::vector<int>& v) {
   struct {
     void operator()(int) {
@@ -2296,7 +2296,7 @@ however this is not allowed, ``f cannot be passed to a template function in C++0
 The new solution
 C++11 introduces lambdas allow you to write an inline, anonymous functor to replace the `struct f`. For small simple examples this can be cleaner to read (it keeps everything in one place) and potentially simpler to maintain, for example in the simplest form:
 
-```python
+```c++
 void func3(std::vector<int>& v) {
   std::for_each(v.begin(), v.end(), [](int) { /* do something here*/ });
 }
@@ -2308,7 +2308,7 @@ Lambda functions are just syntactic sugar for anonymous functors.
 
 In simple cases the return type of the lambda is deduced for you, e.g.:
 
-```python
+```c++
 void func4(std::vector<double>& v) {
   std::transform(v.begin(), v.end(), v.begin(),
                  [](double d) { return d < 0.00001 ? 0 : d; }
@@ -2318,7 +2318,7 @@ void func4(std::vector<double>& v) {
 
 however when you start to write more complex lambdas you will quickly encounter cases where the return type cannot be deduced by the compiler, e.g.:
 
-```python
+```c++
 void func4(std::vector<double>& v) {
     std::transform(v.begin(), v.end(), v.begin(),
         [](double d) {
@@ -2333,7 +2333,7 @@ void func4(std::vector<double>& v) {
 
 To resolve this you are allowed to explicitly specify a return type for a lambda function, using `-> T`:
 
-```python
+```c++
 void func4(std::vector<double>& v) {
     std::transform(v.begin(), v.end(), v.begin(),
         [](double d) -> double {
@@ -2351,7 +2351,7 @@ void func4(std::vector<double>& v) {
 
 So far we've not used anything other than what was passed to the lambda within it, but we can also use other variables, within the lambda. If you want to access other variables you can use the capture clause (the `[]` of the expression), which has so far been unused in these examples, e.g.:
 
-```python
+```c++
 void func5(std::vector<double>& v, const double& epsilon) {
     std::transform(v.begin(), v.end(), v.begin(),
         [epsilon](double d) -> double {
@@ -2432,7 +2432,7 @@ The document in question is a great reference for this question, because it show
 Culprit: False Data Dependency (and the compiler isn't even aware of it)
 On Sandy/Ivy Bridge and Haswell processors, the instruction:
 
-```python
+```c++
 popcnt  src, dest
 ```
 
@@ -2457,7 +2457,7 @@ Ubuntu 12
 
 Different Registers: 18.6195 GB/s
 
-```python
+```c++
 .L4:
     movq    (%rbx,%rax,8), %r8
     movq    8(%rbx,%rax,8), %r9
@@ -2480,7 +2480,7 @@ Different Registers: 18.6195 GB/s
 
 Same Register: 8.49272 GB/s
 
-```python
+```c++
 .L9:
     movq    (%rbx,%rdx,8), %r9
     movq    8(%rbx,%rdx,8), %r10
@@ -2504,7 +2504,7 @@ Same Register: 8.49272 GB/s
 
 Same Register with broken chain: 17.8869 GB/s
 
-```python
+```c++
 .L14:
     movq    (%rbx,%rdx,8), %r9
     movq    8(%rbx,%rdx,8), %r10
@@ -2538,7 +2538,7 @@ AMD processors do not appear to have this false dependency.
 
 The full test code is below for reference:
 
-```python
+```c++
 #include <iostream>
 #include <chrono>
 #include <x86intrin.h>
@@ -2663,7 +2663,7 @@ An equally interesting benchmark can be found here: http://pastebin.com/kbzgL8si
 
 This benchmark varies the number of `popcnt`s that are in the (false) dependency chain.
 
-```python
+```c++
 False Chain 0:  41959360000 0.57748 sec     18.1578 GB/s
 False Chain 1:  41959360000 0.585398 sec    17.9122 GB/s
 False Chain 2:  41959360000 0.645483 sec    16.2448 GB/s
@@ -2702,7 +2702,7 @@ If you want to go really crazy you can do things like this:
 
 And to make sure we are clear on the meaning of const
 
-```python
+```c++
 const int* foo;
 int *const bar; //note, you actually need to set the pointer 
                 //here because you can't change it later ;)
@@ -2718,7 +2718,7 @@ int *const bar; //note, you actually need to set the pointer
 Here is how I understood not just what `virtual` functions are, but why they're required:
 Let's say you have these two classes:
 
-```python
+```c++
 class Animal
 {
     public:
@@ -2734,7 +2734,7 @@ class Cat : public Animal
 
 In your main function:
 
-```python
+```c++
 Animal *animal = new Animal;
 Cat *cat = new Cat;
 
@@ -2745,14 +2745,14 @@ cat->eat();    // Outputs: "I'm eating a rat."
 So far so good, right? Animals eat generic food, cats eat rats, all without `virtual`.
 Let's change it a little now so that `eat()` is called via an intermediate function (a trivial function just for this example):
 
-```python
+```c++
 // This can go at the top of the main.cpp file
 void func(Animal *xyz) { xyz->eat(); }
 ```
 
 Now our main function is:
 
-```python
+```c++
 Animal *animal = new Animal;
 Cat *cat = new Cat;
 
@@ -2763,7 +2763,7 @@ func(cat);    // Outputs: "I'm eating generic food."
 Uh oh... we passed a Cat into `func()`, but it won't eat rats. Should you overload `func()` so it takes a `Cat*`? If you have to derive more animals from Animal they would all need their own `func()`.
 The solution is to make `eat()` from the `Animal` class a virtual function:
 
-```python
+```c++
 class Animal
 {
     public:
@@ -2779,7 +2779,7 @@ class Cat : public Animal
 
 Main:
 
-```python
+```c++
 func(animal); // Outputs: "I'm eating generic food."
 func(cat);    // Outputs: "I'm eating a rat."
 ```
@@ -2810,7 +2810,7 @@ At  certain specified points in the execution sequence called sequence points, a
 Evaluation  of  an  expression produces something and if in addition there is a change in the state of the execution environment it is said that the expression (its evaluation) has some side effect(s).
 For example:
 
-```python
+```c++
 int x = y++; //where y is also an int
 ```
 
@@ -2829,7 +2829,7 @@ at the end of the evaluation of full expression (`1.9/16`) (A full-expression is
 
 Example :
 
-```python
+```c++
 int a = 5; // ; is a sequence point here
 ```
 
@@ -2868,7 +2868,7 @@ Before I get into that you must know the difference(s) between Undefined Behavio
 You must also know that `the order of evaluation of operands of individual operators and subexpressions of individual expressions, and the order in which side effects take place, is unspecified`.
 For example:
 
-```python
+```c++
 int x = 5, y = 6;
 
 int z = x++ + y++; //it is unspecified whether x++ or y++ will be evaluated first.
@@ -2885,7 +2885,7 @@ Informally it means that between two sequence points a variable must not be modi
 In an expression statement, the `next sequence point` is usually at the terminating semicolon, and the `previous sequence point` is at the end of the previous statement. An expression may also contain intermediate `sequence points`.
 From the above sentence the following expressions invoke Undefined Behaviour:
 
-```python
+```c++
 i++ * ++i;   // UB, i is modified more than once btw two SPs
 i = ++i;     // UB, same as above
 ++i = 2;     // UB, same as above
@@ -2897,7 +2897,7 @@ i = (i, ++i, ++i); // UB, there's no SP between `++i` (right most) and assignmen
 
 But the following expressions are fine:
 
-```python
+```c++
 i = (i, ++i, 1) + 1; // well defined (AFAIK)
 i = (++i, i++, i);   // well defined 
 int j = i;
@@ -2913,20 +2913,20 @@ For example in `i = i + 1` all the access of ``i (in L.H.S and in R.H.S) are dir
 This rule effectively constrains legal expressions to those in which the accesses demonstrably precede the modification.
 Example 1:
 
-```python
+```c++
 std::printf("%d %d", i,++i); // invokes Undefined Behaviour because of Rule no 2
 ```
 
 Example 2:
 
-```python
+```c++
 a[i] = i++ // or a[++i] = i or a[i++] = ++i etc
 ```
 
 is disallowed because one of the accesses of ``i (the one in `a[i]`) has nothing to do with the value which ends up being stored in i (which happens over in `i++`), and so there's no good way to define--either for our understanding or the compiler's--whether the access should take place before or after the incremented value is stored. So the behaviour is undefined.
 Example 3 :
 
-```python
+```c++
 int x = i + i++ ;// Similar to above
 ```
 
@@ -2945,7 +2945,7 @@ In C++2003 a 3rd type of initialization, value initialization was added.
 
 Assume:
 
-```python
+```c++
 struct A { int m; }; // POD
 struct B { ~B(); int m; }; // non-POD, compiler generated default ctor
 struct C { C() : m() {}; ~C(); int m; }; // non-POD, default-initialising m
@@ -2979,7 +2979,7 @@ This is one of the dusty corners of C++ that can drive you crazy. When construct
 
 In order to parse a C++ program, the compiler needs to know whether certain names are types or not. The following example demonstrates that:
 
-```python
+```c++
 t * f;
 ```
 
@@ -3005,7 +3005,7 @@ A name used in a template declaration or definition and that is dependent on a t
 
 There are many names for which `typename` is not necessary, because the compiler can, with the applicable name lookup in the template definition, figure out how to parse a construct itself - for example with `T *f;`, when ``T is a type template parameter. But for `t::x * f;` to be a declaration, it must be written as `typename t::x *f;`. If you omit the keyword and the name is taken to be a non-type, but when instantiation finds it denotes a type, the usual error messages are emitted by the compiler. Sometimes, the error consequently is given at definition time:
 
-```python
+```c++
 // t::x is taken as non-type, but as an expression the following misses an
 // operator between the two names or a semicolon separating them.
 t::x f;
@@ -3018,13 +3018,13 @@ A similar gotcha exists for names that denote templates, as hinted at by the int
 
 Remember the initial quote above and how the Standard requires special handling for templates as well? Let's take the following innocent-looking example: 
 
-```python
+```c++
 boost::function< int() > f;
 ```
 
 It might look obvious to a human reader. Not so for the compiler. Imagine the following arbitrary definition of `boost::function` and ``f:
 
-```python
+```c++
 namespace boost { int function = 0; }
 int main() { 
   int f = 0;
@@ -3040,13 +3040,13 @@ After name lookup (3.4) finds that a name is a template-name, if this name is fo
 
 Now we are back to the same problem as with `typename`. What if we can't know yet whether the name is a template when parsing the code? We will need to insert `template` immediately before the template name, as specified by `14.2/4`. This looks like:
 
-```python
+```c++
 t::template f<int>(); // call a function template
 ```
 
 Template names can not only occur after a `::` but also after a `->` or ``. in a class member access. You need to insert the keyword there too:
 
-```python
+```c++
 this->template f<int>(); // call a function template
 ```
 
@@ -3078,7 +3078,7 @@ Not primarily a concern of this article, but still worth mentioning: Function na
 
 In enough cases we need both of `typename` and `template`. Your code should look like the following
 
-```python
+```c++
 template <typename T, typename Tail>
 struct UnionNode : public Tail {
     // ...
@@ -3091,7 +3091,7 @@ struct UnionNode : public Tail {
 
 The keyword `template` doesn't always have to appear in the last part of a name. It can appear in the middle before a class name that's used as a scope, like in the following example
 
-```python
+```c++
 typename t::template iterator<int>::value_type v;
 ```
 
@@ -3099,7 +3099,7 @@ In some cases, the keywords are forbidden, as detailed below
 
 On the name of a dependent base class you are not allowed to write `typename`. It's assumed that the name given is a class type name. This is true for both names in the base-class list and the constructor initializer list:
 
-```python
+```c++
  template <typename T>
  struct derive_from_Has_type : /* typename */ SomeBase<T>::type 
  { };
@@ -3107,7 +3107,7 @@ On the name of a dependent base class you are not allowed to write `typename`. I
 
 In using-declarations it's not possible to use `template` after the last `::`, and the C++ committee said not to work on a solution. 
 
-```python
+```c++
  template <typename T>
  struct derive_from_Has_type : SomeBase<T> {
     using SomeBase<T>::template type; // error
@@ -3554,7 +3554,7 @@ To answer that question, I'd like to describe member's accessors first in my own
 There are three accessors that I'm aware of: `public`, `protected` and `private`. 
 Let:
 
-```python
+```c++
 class Base {
     public:
         int publicMember;
@@ -3699,7 +3699,7 @@ POSIX 2008 reserved symbols are defined here.  The restrictions are somewhat mor
 
 `Case` statements are only labels. This means the compiler will interpret this as a jump directly to the label. In C++, the problem here is one of scope. Your curly brackets define the scope as everything inside the `switch` statement. This means that you are left with a scope where a jump will be performed further into the code skipping the initialization. The correct way to handle this is to define a scope specific to that `case` statement and define your variable within it. 
 
-```python
+```c++
 switch (val)
 {   
 case VAL:  
@@ -3720,14 +3720,14 @@ break;
 
 If you just want to pass a `std::string` to a function that needs `const char*` you can use 
 
-```python
+```c++
 std::string str;
 const char * c = str.c_str();
 ```
 
 If you want to get a writable copy, like `char *`, you can do that with this:
 
-```python
+```c++
 std::string str;
 char * writable = new char[str.size() + 1];
 std::copy(str.begin(), str.end(), writable);
@@ -3741,7 +3741,7 @@ Edit: Notice that the above is not exception safe. If anything between the `new`
 boost::scoped_array
 `boost::scoped_array` will delete the memory for you upon going out of scope:
 
-```python
+```c++
 std::string str;
 boost::scoped_array<char> writable(new char[str.size() + 1]);
 std::copy(str.begin(), str.end(), writable.get());
@@ -3756,7 +3756,7 @@ writable[str.size()] = '\0'; // don't forget the terminating 0
 std::vector
 This is the standard way (does not require any external library). You use `std::vector`, which completely manages the memory for you.
 
-```python
+```c++
 std::string str;
 std::vector<char> writable(str.begin(), str.end());
 writable.push_back('\0');
@@ -3794,7 +3794,7 @@ You want to allocate memory which will persist after leaving the current block. 
 Why dynamic allocation is often unnecessary
 In C++ there's a neat construct called a destructor.  This mechanism allows you to manage resources by aligning the lifetime of the resource with the lifetime of a variable. This technique is called RAII and is the distinguishing point of C++. It "wraps" resources into objects.  `std::string` is a perfect example.  This snippet:
 
-```python
+```c++
 int main ( int argc, char* argv[] )
 {
     std::string program(argv[0]);
@@ -3804,7 +3804,7 @@ int main ( int argc, char* argv[] )
 actually allocates a variable amount of memory.  The `std::string` object allocates memory using the heap and releases it in its destructor.  In this case, you did not need to manually manage any resources and still got the benefits of dynamic memory allocation.
 In particular, it implies that in this snippet:
 
-```python
+```c++
 int main ( int argc, char* argv[] )
 {
     std::string * program = new std::string(argv[0]);  // Bad!
@@ -3823,7 +3823,7 @@ less prone to memory/resource leaks.
 Bonus points
 In the referenced question, there are additional concerns.  In particular, the following class:
 
-```python
+```c++
 class Line {
 public:
     Line();
@@ -3842,7 +3842,7 @@ Line::~Line() {
 
 Is actually a lot more risky to use than the following one:
 
-```python
+```c++
 class Line {
 public:
     Line();
@@ -3857,7 +3857,7 @@ Line::Line() {
 
 The reason is that `std::string` properly defines a copy constructor.  Consider the following program:
 
-```python
+```c++
 int main ()
 {
     Line l1;
@@ -3870,7 +3870,7 @@ Other notes
 Extensive use of RAII is considered a best practice in C++ because of all the reasons above.  However, there is an additional benefit which is not immediately obvious.  Basically, it's better than the sum of its parts.  The whole mechanism composes.  It scales.
 If you use the `Line` class as a building block:
 
-```python
+```c++
  class Table
  {
       Line borders[4];
@@ -3879,7 +3879,7 @@ If you use the `Line` class as a building block:
 
 Then
 
-```python
+```c++
  int main ()
  {
      Table table;
@@ -3896,7 +3896,7 @@ C++11: Yes!
 C++11 and onwards has this same feature (called delegating constructors). 
 The syntax is slightly different from C#:
 
-```python
+```c++
 class Foo {
 public: 
   Foo(char x, int y) {}
@@ -3909,7 +3909,7 @@ Unfortunately, there's no way to do this in C++03, but there are two ways of sim
 
 You can combine two (or more) constructors via default parameters:
 
-```python
+```c++
 class Foo {
 public:
   Foo(char x, int y=0);  // combines two constructors (char) and (char, int)
@@ -3919,7 +3919,7 @@ public:
 
 Use an init method to share common code:
 
-```python
+```c++
 class Foo {
 public:
   Foo(char x);
@@ -3960,7 +3960,7 @@ See also this more general question about beating the compiler with hand-written
 Usually you're fine letting the compiler do its thing, especially if you try to write C++ that can compile efficiently.  Also see is assembly faster than compiled languages?.  One of the answers links to these neat slides showing how various C compilers optimize some really simple functions with cool tricks.
 
 
-```python
+```c++
 even:
     mov rbx, 2
     xor rdx, rdx
@@ -3988,7 +3988,7 @@ You should have used `uint64_t n`, so it can just SHR.  And so it's portable to 
 
 BTW, gcc's optimized asm output looks pretty good (using `unsigned long n`): the inner loop it inlines into `main()` does this:
 
-```python
+```c++
  # from gcc5.4 -O3  plus my comments
 
  # edx= count=1
@@ -4022,7 +4022,7 @@ Beating the compiler
 GCC did a pretty good job here.  It could save one code byte by using `inc edx` instead of `add edx, 1`, because nobody cares about P4 and its false-dependencies for partial-flag-modifying instructions.
 It could also save all the MOV instructions, and the TEST:  SHR sets CF= the bit shifted out, so we can use `cmovc` instead of `test` / `cmovz`.
 
-```python
+```c++
  ### Hand-optimized version of what gcc does
 .L9:                       #do{
     lea     rcx, [rax+1+rax*2] # rcx = 3*n + 1
@@ -4048,7 +4048,7 @@ You could maybe even do this with SSE packed-compare stuff to conditionally incr
 I think the best strategy to make detection of a ``1 "sticky" is to mask the vector of all-ones that you add to increment the counter.  So after you've seen a ``1 in an element, the increment-vector will have a zero, and +=0 is a no-op.
 Untested idea for manual vectorization
 
-```python
+```c++
 # starting with YMM0 = [ n_d, n_c, n_b, n_a ]  (64-bit elements)
 # ymm4 = _mm256_set1_epi64x(1):  increment vector
 # ymm5 = all-zeros:  count vector
@@ -4090,7 +4090,7 @@ Besides just implementing the same logic with more efficient asm, look for ways 
 @EOF points out that `tzcnt` (or `bsf`) could be used to do multiple `n/=2` iterations in one step.  That's probably better than SIMD vectorizing, because no SSE or AVX instruction can do that.  It's still compatible with doing multiple scalar ``ns in parallel in different integer registers, though.
 So the loop might look like this:
 
-```python
+```c++
 goto loop_entry;  // C++ structured like the asm, for illustration only
 do {
    n = n*3 + 1;
@@ -4124,7 +4124,7 @@ See discussion in comments: Veedrac's code is excellent on CPUs with BMI1 (i.e. 
 
 To expand on the answer by bradtgmurray,  you may want to make one exception to the pure virtual method list of your interface by adding a virtual destructor. This allows you to pass pointer ownership to another party without exposing the concrete derived class. The destructor doesn't have to do anything, because the interface doesn't have any concrete members. It might seem contradictory to define a function as both virtual and inline, but trust me - it isn't.
 
-```python
+```c++
 class IDemo
 {
     public:

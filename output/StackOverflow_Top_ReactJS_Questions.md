@@ -66,7 +66,7 @@ In earlier versions of React Router, you had to create your own `history` instan
 1. Use the `withRouter` higher-order component
 The `withRouter` higher-order component will inject the `history` object as a prop of the component. This allows you to access the `push` and `replace` methods without having to deal with the `context`.
 
-```python
+```reactjs
 import { withRouter } from 'react-router-dom'
 // this also works with react-router-native
 
@@ -83,7 +83,7 @@ const Button = withRouter(({ history }) => (
 2. Use composition and render a `<Route>`
 The `<Route>` component isn't just for matching locations. You can render a pathless route and it will always match the current location. The `<Route>` component passes the same props as `withRouter`, so you will be able to access the `history` methods through the `history` prop.
 
-```python
+```reactjs
 import { Route } from 'react-router-dom'
 
 const Button = () => (
@@ -102,7 +102,7 @@ const Button = () => (
 *But you probably should not
 The last option is one that you should only use if you feel comfortable working with React's context model. Although context is an option, it should be stressed that context is an unstable API and React has a section Why Not To Use Context in their documentation. So use at your own risk!
 
-```python
+```reactjs
 const Button = (props, context) => (
   <button
     type='button'
@@ -132,7 +132,7 @@ Button.contextTypes = {
 
 Think of it like you're just calling JavaScript functions. You can't put a `for` loop inside a function call:
 
-```python
+```reactjs
 return tbody(
     for (var i = 0; i < numrows; i++) {
         ObjectRow()
@@ -142,7 +142,7 @@ return tbody(
 
 But you can make an array, and then pass that in:
 
-```python
+```reactjs
 var rows = [];
 for (var i = 0; i < numrows; i++) {
     rows.push(ObjectRow());
@@ -153,7 +153,7 @@ return tbody(rows);
 
 You can use basically the same structure when working with JSX:
 
-```python
+```reactjs
 var rows = [];
 for (var i = 0; i < numrows; i++) {
     // note: we add a key prop here to allow react to uniquely identify each
@@ -171,7 +171,7 @@ Incidentally, my JavaScript example is almost exactly what that example of JSX t
 
 You can use React.Children to iterate over the children, and then clone each element with new props (shallow merged) using React.cloneElement e.g:
 
-```python
+```reactjs
 const Child = ({ doSomething, value }) => (
   <div onClick={() => doSomething(value)}>Click Me</div>
 );
@@ -209,7 +209,7 @@ Fiddle: https://jsfiddle.net/2q294y43/2/
 The two approaches are not interchangeable. You should initialize state in the constructor when using ES6 classes, and define the `getInitialState` method when using `React.createClass`.
 See the official React doc on the subject of ES6 classes.
 
-```python
+```reactjs
 class MyComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -220,7 +220,7 @@ class MyComponent extends React.Component {
 
 is equivalent to 
 
-```python
+```reactjs
 var MyComponent = React.createClass({
   getInitialState() {
     return { /* initial state */ };
@@ -236,20 +236,20 @@ Updated Answer (April 2018)
 That's property spread notation, being added in ES2018 (proposal here, in the draft specification here), but long-supported in React projects via transpilation (as "JSX spread attributes" even though you could do it elsewhere, too, not just attributes).
 `{...this.props}` spreads out the properties in props as discrete properties (attributes) on the `Modal` element you're creating. For instance, if `this.props` contained `a: 1` and `b: 2`, then
 
-```python
+```reactjs
 <Modal {...this.props} title='Modal heading' animation={false}>
 ```
 
 would be the same as
 
-```python
+```reactjs
 <Modal a={this.props.a} b={this.props.b} title='Modal heading' animation={false}>
 ```
 
 But it's dynamic, so whatever properties are in `props` are included.
 Spread notation is handy not only for that use case, but for creating a new object with most (or all) of the properties of an existing object which comes up a lot when you're updating state, since you can't modify state directly:
 
-```python
+```reactjs
 this.setState(prevState => {
     return {foo: {...prevState.foo, a: "updated"}};
 });
@@ -259,7 +259,7 @@ That replaces `this.state.foo` with a new object with all the same properties as
 
 
 
-```python
+```reactjs
 const obj = {
   foo: {
     a: 1,
@@ -273,7 +273,7 @@ obj.foo = {...obj.foo, a: "updated"};
 console.log("updated", obj.foo);```
 
 
-```python
+```reactjs
 .as-console-wrapper {
   max-height: 100% !important;
 }```
@@ -287,7 +287,7 @@ Those are JSX spread attributes:
 Spread Attributes
 If you already have props as an object, and you want to pass it in JSX, you can use `...` as a "spread" operator to pass the whole props object. These two components are equivalent:
 
-```python
+```reactjs
 function App1() {
   return <Greeting firstName="Ben" lastName="Hector" />;
 }
@@ -315,7 +315,7 @@ You can read my answer to How to dispatch a Redux action with a timeout for a mo
 Middleware like Redux Thunk or Redux Promise just gives you syntax sugar for dispatching thunks or promises, but you dont have to use it.
 So, without any middleware, your action creator might look like
 
-```python
+```reactjs
 // action creator
 function loadData(dispatch, userId) { // needs to dispatch, so it is first argument
   return fetch(`http://data.com/${userId}`)
@@ -334,7 +334,7 @@ componentWillMount() {
 
 But with Thunk Middleware you can write it like this:
 
-```python
+```reactjs
 // action creator
 function loadData(userId) {
   return dispatch => fetch(`http://data.com/${userId}`) // Redux Thunk handles these
@@ -355,7 +355,7 @@ So there is no huge difference. One thing I like about the latter approach is th
 Also think about how this code will change. Say we want to have a second data loading function, and to combine them in a single action creator.
 With the first approach we need to be mindful of what kind of action creator we are calling:
 
-```python
+```reactjs
 // action creators
 function loadSomeData(dispatch, userId) {
   return fetch(`http://data.com/${userId}`)
@@ -389,7 +389,7 @@ componentWillMount() {
 
 With Redux Thunk action creators can `dispatch` the result of other action creators and not even think whether those are synchronous or asynchronous:
 
-```python
+```reactjs
 // action creators
 function loadSomeData(userId) {
   return dispatch => fetch(`http://data.com/${userId}`)
@@ -423,7 +423,7 @@ componentWillMount() {
 
 With this approach, if you later want your action creators to look into current Redux state, you can just use the second `getState` argument passed to the thunks without modifying the calling code at all:
 
-```python
+```reactjs
 function loadSomeData(userId) {
   // Thanks to Redux Thunk I can use getState() here without changing callers
   return (dispatch, getState) => {
@@ -443,7 +443,7 @@ function loadSomeData(userId) {
 
 If you need to change it to be synchronous, you can also do this without changing any calling code:
 
-```python
+```reactjs
 // I can change it to be a regular action creator without touching callers
 function loadSomeData(userId) {
   return {
@@ -483,7 +483,7 @@ Behavior and state  how an element/component looks in a given state
 React is already managing the state of your components, this makes styles of state and behavior a natural fit for colocation with your component logic.
 Instead of building components to render with conditional state-classes, consider adding state-styles directly:
 
-```python
+```reactjs
 // Typical component with state-classes
 <li 
  className={classnames({ 'todo-list__item': true, 'is-complete': item.complete })} />
@@ -497,7 +497,7 @@ Instead of building components to render with conditional state-classes, conside
 Note that we're using a class to style appearance but no longer using any `.is-` prefixed class for state and behavior.
 We can use `Object.assign` (ES6) or `_.extend` (underscore/lodash) to add support for multiple states:
 
-```python
+```reactjs
 // Supporting multiple-states with inline-styles
 <li 'todo-list__item'
  style={Object.assign({}, item.complete && styles.complete, item.due && styles.due )}>
@@ -508,7 +508,7 @@ We can use `Object.assign` (ES6) or `_.extend` (underscore/lodash) to add suppor
 
 Now that we're using `Object.assign` it becomes very simple to make our component reusable with different styles. If we want to override the default styles, we can do so at the call-site with props, like so: `<TodoItem dueStyle={ fontWeight: "bold" } />`. Implemented like this:
 
-```python
+```reactjs
 <li 'todo-list__item'
  style={Object.assign({},
          item.due && styles.due,
@@ -519,7 +519,7 @@ Layout
 Personally, I don't see compelling reason to inline layout styles. There are a number of great CSS layout systems out there. I'd just use one.
 That said, don't add layout styles directly to your component. Wrap your components with layout components. Here's an example.
 
-```python
+```reactjs
 // This couples your component to the layout system
 // It reduces the reusability of your component
 <UserBadge
@@ -545,7 +545,7 @@ I like Radium because the syntax for those hard parts is designed to model that 
 
 Often you'll see a style object outside of the module. For a todo-list component, it might look something like this:
 
-```python
+```reactjs
 var styles = {
   root: {
     display: "block"
@@ -569,7 +569,7 @@ var styles = {
 
 Adding a bunch of style logic to your template can get a little messy (as seen above). I like to create getter functions to compute styles:
 
-```python
+```reactjs
 React.createClass({
   getStyles: function () {
     return Object.assign(
@@ -598,7 +598,7 @@ I'm happy to help as you make new discoveries along the way :) Hit me up -> @cha
 
 In redux-saga, the equivalent of the above example would be
 
-```python
+```reactjs
 export function* loginSaga() {
   while(true) {
     const { user, pass } = yield take(LOGIN_REQUEST)
@@ -626,7 +626,7 @@ export function* loadUserData(uid) {
 The first thing to notice is that we're calling the api functions using the form `yield call(func, ...args)`. `call` doesn't execute the effect, it just creates a plain object like `{type: 'CALL', func, args}`. The execution is delegated to the redux-saga middleware which takes care of executing the function and resuming the generator with its result.
 The main advantage is that you can test the generator outside of Redux using simple equality checks
 
-```python
+```reactjs
 const iterator = loginSaga()
 
 assert.deepEqual(iterator.next().value, take(LOGIN_REQUEST))
@@ -657,7 +657,7 @@ Take into account that when waiting for the result of api calls (either initial 
 
 How would you implement that with thunks; while also providing full test coverage for the entire flow? Here is how it may look with Sagas:
 
-```python
+```reactjs
 function* authorize(credentials) {
   const token = yield call(api.authorize, credentials)
   yield put( login.success(token) )
@@ -722,7 +722,7 @@ A virtual DOM is nice because it lets us write our code as if we were re-renderi
 
 You should do it in `componentDidMount` and `refs callback` instead. Something like this
 
-```python
+```reactjs
 componentDidMount(){
    this.nameInput.focus(); 
 }
@@ -731,7 +731,7 @@ componentDidMount(){
 
 
 
-```python
+```reactjs
 class App extends React.Component{
   componentDidMount(){
     this.nameInput.focus();
@@ -754,18 +754,18 @@ class App extends React.Component{
 ReactDOM.render(<App />, document.getElementById('app'));```
 
 
-```python
+```reactjs
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.js"></script>
 <div id="app"></div>```
 
 ## [Invariant Violation: _registerComponent(): Target container is not a DOM element](https://stackoverflow.com/questions/26566317/invariant-violation-registercomponent-target-container-is-not-a-dom-elem)
 
-**306 Votes**, Dan Abramov
+**307 Votes**, Dan Abramov
 
 By the time script is executed, `document` element is not available yet, because `script` itself is in the `head`. While it's a valid solution to keep `script` in `head` and render on `DOMContentLoaded` event, it's even better to put your `script` at the very bottom of the `body` and render root component to a `div` before it like this:
 
-```python
+```reactjs
 <html>
 <head>
 </head>
@@ -778,7 +778,7 @@ By the time script is executed, `document` element is not available yet, because
 
 and in your code, call
 
-```python
+```reactjs
 React.render(<App />, document.getElementById('root'));
 ```
 
@@ -793,7 +793,7 @@ The nice thing about putting `script` at the bottom is that it won't block rende
 
 Use an arrow function:
 
-```python
+```reactjs
 return (
   <th value={column} onClick={() => this.handleSort(column)}>{column}</th>
 );
@@ -808,7 +808,7 @@ The problem with using an arrow function in the render call is it will create a 
 If you create a sub-component, you can pass handler and use props as the arguments, which will then re-render only when the props change (because the handler reference now never changes):
 Sub-component
 
-```python
+```reactjs
 class TableHeader extends Component {
   handleClick = () => {
     this.props.onHeaderClick(this.props.value);
@@ -826,7 +826,7 @@ class TableHeader extends Component {
 
 Main component
 
-```python
+```reactjs
 {this.props.defaultColumns.map((column) => (
   <TableHeader
     value={column}
@@ -839,7 +839,7 @@ Main component
 Old Easy Way (ES5)
 Use `.bind` to pass the parameter you want:
 
-```python
+```reactjs
 return (
   <th value={column} onClick={that.handleSort.bind(that, column)}>{column}</th>
 );
@@ -851,13 +851,13 @@ return (
 
 In my case (using Webpack) it was the difference between:
 
-```python
+```reactjs
 import {MyComponent} from '../components/xyz.js';
 ```
 
 vs
 
-```python
+```reactjs
 import MyComponent from '../components/xyz.js';
 ```
 
@@ -871,7 +871,7 @@ There is only one reason when one needs to pass `props` to `super()`:
 When you want to access `this.props` in constructor.
 Passing:
 
-```python
+```reactjs
 class MyComponent extends React.Component {    
     constructor(props) {
         super(props)
@@ -884,7 +884,7 @@ class MyComponent extends React.Component {
 
 Not passing:
 
-```python
+```reactjs
 class MyComponent extends React.Component {    
     constructor(props) {
         super()
@@ -1040,25 +1040,25 @@ Native DOM render: React changes real DOM nodes in your browser only if they wer
 
 Props and state are related. The state of one component will often become the props of a child component. Props are passed to the child within the render method of the parent as the second argument to `React.createElement()` or, if you're using JSX, the more familiar tag attributes.
 
-```python
+```reactjs
 <MyChild name={this.state.childsName} />
 ```
 
 The parent's state value of `childsName` becomes the child's `this.props.name`. From the child's perspective, the name prop is immutable. If it needs to be changed, the parent should just change its internal state:
 
-```python
+```reactjs
 this.setState({ childsName: 'New name' });
 ```
 
 and React will propagate it to the child for you. A natural follow-on question is: what if the child needs to change its name prop? This is usually done through child events and parent callbacks. The child might expose an event called, for example, `onNameChanged`. The parent would then subscribe to the event by passing a callback handler.
 
-```python
+```reactjs
 <MyChild name={this.state.childsName} onNameChanged={this.handleName} />
 ```
 
 The child would pass its requested new name as an argument to the event callback by calling, e.g., `this.props.onNameChanged('New name')`, and the parent would use the name in the event handler to update its state.
 
-```python
+```reactjs
 handleName: function(newName) {
    this.setState({ childsName: newName });
 }
@@ -1076,7 +1076,7 @@ Try removing the `key={i}` from the `<b></b>` element inside the div's (and chec
 In the sample, if we don't give a key to the `<b>` element and we want to update only the `object.city`, React needs to re-render the whole row vs just the  element. 
 Here is the code:
 
-```python
+```reactjs
 var data = [{name:'Jhon', age:28, city:'HO'},
             {name:'Onhj', age:82, city:'HN'},
             {name:'Nohj', age:41, city:'IT'}
@@ -1120,7 +1120,7 @@ I'm not defining debouncing function in this answer as it's not really relevant,
 ### NOT a good idea:
 
 
-```python
+```reactjs
 var SearchBox = React.createClass({
   method: function() {...},
   debouncedMethod: debounce(this.method,100);
@@ -1133,7 +1133,7 @@ It won't work, because during class description object creation, `this` is not t
 ### NOT a good idea:
 
 
-```python
+```reactjs
 var SearchBox = React.createClass({
   method: function() {...},
   debouncedMethod: function() {
@@ -1149,7 +1149,7 @@ This time you are effectively creating a debounced function that calls your `thi
 ### NOT a good idea:
 
 
-```python
+```reactjs
 var SearchBox = React.createClass({
   debouncedMethod: debounce(function () {...},100),
 });
@@ -1163,7 +1163,7 @@ GOOD IDEA:
 Because debounced functions are stateful, we have to create one debounced function per component instance.
 ES6 (class property): recommended
 
-```python
+```reactjs
 class SearchBox extends React.Component {
     method = debounce(() => { 
       ...
@@ -1173,7 +1173,7 @@ class SearchBox extends React.Component {
 
 ES6 (class constructor)
 
-```python
+```reactjs
 class SearchBox extends React.Component {
     constructor(props) {
         super(props);
@@ -1185,7 +1185,7 @@ class SearchBox extends React.Component {
 
 ES5
 
-```python
+```reactjs
 var SearchBox = React.createClass({
     method: function() {...},
     componentWillMount: function() {
@@ -1202,7 +1202,7 @@ In React, the event objects (ie, `SyntheticEvent`) that you receive in callbacks
 So if you access SyntheticEvent properties async to the original callback (as it may be the case if you throttle/debounce), the properties you access may be erased. If you want the event to never be put back in the pool, you can use the `persist()` method.
 Without persist (default behavior: pooled event)
 
-```python
+```reactjs
 onClick = e => {
   alert(`sync -> hasNativeEvent=${!!e.nativeEvent}`);
   setTimeout(() => {
@@ -1214,7 +1214,7 @@ onClick = e => {
 The 2nd (async) will print `hasNativeEvent=false` because the event properties have been cleaned up.
 With persist
 
-```python
+```reactjs
 onClick = e => {
   e.persist();
   alert(`sync -> hasNativeEvent=${!!e.nativeEvent}`);
@@ -1234,7 +1234,7 @@ Read Julen's answer for an example of using `persist()` with a throttle/debounce
 
 The key is to update the state of the component in the click handler using `setState`. When the state changes get applied, the `render` method gets called again with the new state:
 
-```python
+```reactjs
 var Search = React.createClass({
     getInitialState: function() {
         return { showResults: false };
@@ -1273,7 +1273,7 @@ http://jsfiddle.net/kb3gN/15084/
 
 You should put your component between an enclosing tag, Which mean:
 
-```python
+```reactjs
 //WRONG!
 
 return (  
@@ -1284,7 +1284,7 @@ return (
 
 Instead:
 
-```python
+```reactjs
 //Correct
 
 return (
@@ -1304,7 +1304,7 @@ For example, by using `render` prop. Link to react router: https://reacttraining
 Code example at codesandbox: https://codesandbox.io/s/z3ovqpmp44
 Component
 
-```python
+```reactjs
     class Greeting extends React.Component {
         render() {
             const { text, match: { params } } = this.props;
@@ -1325,7 +1325,7 @@ Component
 
 And usage
 
-```python
+```reactjs
 <Route path="/greeting/:name" render={(props) => <Greeting text="Hello, " {...props} />} />
 ```
 
@@ -1334,7 +1334,7 @@ OLD VERSION
 My preferred way is wrap the `Comments` component and pass the wrapper as a route handler.
 This is your example with changes applied:
 
-```python
+```reactjs
 var Dashboard = require('./Dashboard');
 var Comments = require('./Comments');
 
@@ -1386,7 +1386,7 @@ There may be other scenarios that I'm not thinking of. If yours doesn't fit with
 You could pass a handler from `<List />` to `<Filters />`, which could then be called on the `onChange` event to filter the list with the current value.
 JSFiddle for #1 
 
-```python
+```reactjs
 /** @jsx React.DOM */
 
 var Filters = React.createClass({
@@ -1447,7 +1447,7 @@ React.renderComponent(<List />, document.body);
 Similar to scenario #1, but the parent component will be the one passing down the handler function to `<Filters />`, and will pass the filtered list to `<List />`. I like this method better since it decouples the `<List />` from the `<Filters />`.
 JSFiddle for #2 
 
-```python
+```reactjs
 /** @jsx React.DOM */
 
 var Filters = React.createClass({
@@ -1522,7 +1522,7 @@ When the components can't communicate between any sort of parent-child relations
 
 Add "babel-preset-react"
 
-```python
+```reactjs
 npm install babel-preset-react
 ```
 
@@ -1530,7 +1530,7 @@ and add "presets" option to babel-loader in your webpack.config.js
 (or you can add it to your .babelrc or package.js: http://babeljs.io/docs/usage/babelrc/)
 Here is an example webpack.config.js:
 
-```python
+```reactjs
 { 
     test: /\.jsx?$/,         // Match both .js and .jsx files
     exclude: /node_modules/, 
@@ -1548,13 +1548,13 @@ If you are using react 0.14, you should use `ReactDOM.render()` (from `require('
 UPDATE 2018
 Rule.query has already been deprecated in favour of Rule.options. Usage in webpack 4 is as follows:
 
-```python
+```reactjs
 npm install babel-loader babel-preset-react
 ```
 
 Then in your webpack configuration (as an entry in the module.rules array in the module.exports object)
 
-```python
+```reactjs
 {
     test: /\.jsx?$/,
     exclude: /node_modules/,
@@ -1575,7 +1575,7 @@ Then in your webpack configuration (as an entry in the module.rules array in the
 
 Apparently, for certain attributes, React is intelligent enough to omit the attribute if the value you pass to it is not truthy. For example:
 
-```python
+```reactjs
 var InputComponent = React.createClass({
     render: function() {
         var required = true;
@@ -1590,7 +1590,7 @@ var InputComponent = React.createClass({
 
 will result in:
 
-```python
+```reactjs
 <input type="text" required data-reactid=".0.0">
 ```
 
@@ -1601,7 +1601,7 @@ will result in:
 https://facebook.github.io/react/docs/react-component.html#componentdidmount
 This method is called once after your component is rendered. So your code would look like so.
 
-```python
+```reactjs
 var AppBase = React.createClass({
   componentDidMount: function() {
     var $this = $(ReactDOM.findDOMNode(this));
@@ -1631,14 +1631,14 @@ var AppBase = React.createClass({
 
 React automatically understands booleans for this purpose, so you can simply write (note: not recommended)
 
-```python
+```reactjs
 <option value={option.value} selected={optionsState == option.value}>{option.label}</option>
 ```
 
 and it will output 'selected' appropriately.
 However, React makes this even easier for you. Instead of defining `selected` on each option, you can (and should) simply write `value={optionsState}` on the select tag itself:
 
-```python
+```reactjs
 <select value={optionsState}>
   <option value="A">Apple</option>
   <option value="B">Banana</option>
@@ -1663,7 +1663,7 @@ The parent already has that child prop!: if the child has a prop, then it is bec
 Better implementation
 Child: it really does not have to be more complicated than that.
 
-```python
+```reactjs
 var Child = React.createClass({
   render: function () {
     return <button onClick={this.props.onClick}>{this.props.text}</button>;
@@ -1673,7 +1673,7 @@ var Child = React.createClass({
 
 Parent with single child: using the value it passes to the child
 
-```python
+```reactjs
 var Parent = React.createClass({
   getInitialState: function() {
      return {childText: "Click me! (parent prop)"};
@@ -1699,7 +1699,7 @@ var Parent = React.createClass({
 JsFiddle
 Parent with list of children: you still have everything you need on the parent and don't need to make the child more complicated.
 
-```python
+```reactjs
 var Parent = React.createClass({
   getInitialState: function() {
      return {childrenData: [
@@ -1727,7 +1727,7 @@ Note we are binding with a `null` context because otherwise React issues a warni
 About encapsulation and coupling in other answers
 This is for me a bad idea in term of coupling and encapsulation:
 
-```python
+```reactjs
 var Parent = React.createClass({
   handleClick: function(childComponent) {
      // using childComponent.props
@@ -1746,13 +1746,13 @@ Using refs:
 You already have the click target in the event, and in most case this is enough. 
 Additionnally, you could have used a ref directly on the child:
 
-```python
+```reactjs
 <Child ref="theChild" .../>
 ```
 
 And access the DOM node in the parent with
 
-```python
+```reactjs
 React.findDOMNode(this.refs.theChild)
 ```
 
@@ -1776,7 +1776,7 @@ Edit: ES6 examples
 As many people now use ES6, here are the same examples for ES6 syntax
 The child can be very simple:
 
-```python
+```reactjs
 const Child = ({
   onClick, 
   text
@@ -1789,7 +1789,7 @@ const Child = ({
 
 The parent can be either a class (and it can eventually manage the state itself, but I'm passing it as props here:
 
-```python
+```reactjs
 class Parent1 extends React.Component {
   handleChildClick(childData,event) {
      alert("The Child button data is: " + childData.childText + " - " + childData.childNumber);
@@ -1813,7 +1813,7 @@ class Parent1 extends React.Component {
 
 But it can also be simplified if it does not need to manage state:
 
-```python
+```reactjs
 const Parent2 = ({childrenData}) => (
   <div>
      {childrenData.map(child => (
@@ -1835,7 +1835,7 @@ JsFiddle
 PERF WARNING (apply to ES5/ES6): if you are using `PureComponent` or `shouldComponentUpdate`, the above implementations will not be optimized by default because using `onClick={e => doSomething()}`, or binding directly during the render phase, because it will create a new function everytime the parent renders. If this is a perf bottleneck in your app, you can pass the data to the children, and reinject it inside "stable" callback (set on the parent class, and binded to `this` in class constructor) so that `PureComponent` optimization can kick in, or you can implement your own `shouldComponentUpdate` and ignore the callback in the props comparison check.
 You can also use Recompose library, which provide higher order components to achieve fine-tuned optimisations:
 
-```python
+```reactjs
 // A component that is expensive to render
 const ExpensiveComponent = ({ propA, propB }) => {...}
 
@@ -1849,7 +1849,7 @@ const HyperOptimizedComponent = onlyUpdateForKeys(['propA', 'propB'])(ExpensiveC
 
 In this case you could optimize the Child component by using:
 
-```python
+```reactjs
 const OptimizedChild = onlyUpdateForKeys(['text'])(Child)
 ```
 
@@ -1880,7 +1880,7 @@ See also my answer on upsides of using Redux.
 
 React (or JSX) doesn't support variable interpolation inside an attribute value, but you can put any JS expression inside curly braces as the entire attribute value, so this works:
 
-```python
+```reactjs
 <img className="image" src={"images/" + this.props.image} />
 ```
 
@@ -1895,7 +1895,7 @@ Treat this.state as if it were immutable.
 Your `push` will mutate the state directly and that could potentially lead to error prone code, even if you are "resetting" the state again afterwards. F.ex, it could lead to that some lifecycle methods like `componentDidUpdate` wont trigger.
 The recommended approach in later React versions is to use an updater function when modifying states to prevent race conditions:
 
-```python
+```reactjs
 this.setState(prevState => ({
   arrayvar: [...prevState.arrayvar, newelement]
 }))
@@ -1905,7 +1905,7 @@ The memory "waste" is not an issue compared to the errors you might face using n
 Alternative syntax for earlier React versions
 You can use `concat` to get a clean syntax since it returns a new array:
 
-```python
+```reactjs
 this.setState({ 
   arrayvar: this.state.arrayvar.concat([newelement])
 })
@@ -1913,7 +1913,7 @@ this.setState({
 
 In ES6 you can use the Spread Operator:
 
-```python
+```reactjs
 this.setState({
   arrayvar: [...this.state.arrayvar, newelement]
 })
@@ -1928,7 +1928,7 @@ Replacing View with ScrollView is not a correct solution, as if you have multipl
 Correct way is to encapsulate View with `TouchableWithoutFeedback` and calling `Keyboard.dismiss()`
 If you have
 
-```python
+```reactjs
 <View style={styles.container}>
     <TextInput keyboardType='numeric'/>
 </View>
@@ -1936,7 +1936,7 @@ If you have
 
 Change it to
 
-```python
+```reactjs
 import {Keyboard} from 'react-native'
 
 <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -1948,7 +1948,7 @@ import {Keyboard} from 'react-native'
 
 EDIT: You can also create a Higher Order Component to dismiss the keyboard.
 
-```python
+```reactjs
 import React from 'react';
 import { TouchableWithoutFeedback, Keyboard } from 'react-native';
 
@@ -1965,7 +1965,7 @@ const DismissKeyboardHOC (Comp) => {
 
 Simply use it like this
 
-```python
+```reactjs
 const DismissKeyboardView = DismissKeyboardHOC(View)
 ...
 render() {
@@ -1995,7 +1995,7 @@ and how you handle events.
 That is what `containers` are for.
 Therefore, a "well designed" `component` in the pattern look like this:
 
-```python
+```reactjs
 class FancyAlerter extends Component {
     sendAlert = () => {
         this.props.sendTheAlert()
@@ -2013,7 +2013,7 @@ See how this component gets the info it displays from props (which came from the
 That's where `mapDispatchToProps` comes in: in the corresponding `container`
 `FancyButtonContainer.js`
 
-```python
+```reactjs
 function mapDispatchToProps(dispatch) {
     return({
         sendTheAlert: () => {dispatch(ALERT_ACTION)}
@@ -2047,7 +2047,7 @@ syntax that is shown in most examples
 
 I'm a big proponent of putting async write operations in the action creators and async read operations in the store. The goal is to keep the store state modification code in fully synchronous action handlers; this makes them simple to reason about and simple to unit test. In order to prevent multiple simultaneous requests to the same endpoint (for example, double-reading), I'll move the actual request processing into a separate module that uses promises to prevent the multiple requests; for example:
 
-```python
+```reactjs
 class MyResourceDAO {
   get(id) {
     if (!this.promises[id]) {
@@ -2063,7 +2063,7 @@ class MyResourceDAO {
 While reads in the store involve asynchronous functions, there is an important caveat that the stores don't update themselves in the async handlers, but instead fire an action and only fire an action when the response arrives. Handlers for this action end up doing the actual state modification.
 For example, a component might do:
 
-```python
+```reactjs
 getInitialState() {
   return { data: myStore.getSomeData(this.props.id) };
 }
@@ -2071,7 +2071,7 @@ getInitialState() {
 
 The store would have a method implemented, perhaps, something like this:
 
-```python
+```reactjs
 class Store {
   getSomeData(id) {
     if (!this.cache[id]) {
@@ -2128,7 +2128,7 @@ Setting that aside, there are four ways to navigate programatically, ordered by 
 There are 3 ways to render something with a `Route`, by using either `component`, `render` or `children` props, but don't use more than one in the same `Route`. The choice depends on the use case, but basically the first two options will only render your component if the `path` matches the url location, whereas with `children` the component will be rendered whether the path matches the location or not (useful for adjusting the UI based on URL matching).
 If you want to customise your component rendering output, you need to wrap your component in a function and use the `render` option, in order to pass to your component any other props you desire, apart from `match`, `location` and `history`. An example to illustrate:
 
-```python
+```reactjs
 import { BrowserRouter as Router } from 'react-router-dom'
 
 const ButtonToNavigate = ({ title, history }) => (
@@ -2155,7 +2155,7 @@ const App = () => (
 2.- Using `withRouter` HoC
 This higher order component will inject the same props as `Route`. However, it carries along the limitation that you can have only 1 HoC per file.
 
-```python
+```reactjs
 import { withRouter } from 'react-router-dom'
 
 const ButtonToNavigate = ({ history }) => (
@@ -2179,13 +2179,13 @@ export default withRouter(ButtonToNavigate);
 
 3.- Using a `Redirect` component Rendering a `<Redirect>` will navigate to a new location. But keep in mind that, by default, the current location is replaced by the new one, like server-side redirects (HTTP 3xx). The new location is provided by `to` prop, that can be a string (URL to redirect to) or a `location` object. If you want to push a new entry onto the history instead, pass a `push` prop as well and set it to `true`
 
-```python
+```reactjs
 <Redirect to="/your-new-location" push />
 ```
 
 4.- Accessing `router` manually through context A bit discouraged because context is still an experimental API and it is likely to break/change in future releases of React
 
-```python
+```reactjs
 const ButtonToNavigate = (props, context) => (
   <button
     type="button"
@@ -2219,7 +2219,7 @@ From React's documentation:
 
 If you want a function to be executed after the state change occurs, pass it in as a callback.
 
-```python
+```reactjs
 this.setState({value: event.target.value}, function () {
     console.log(this.state.value);
 });
@@ -2236,7 +2236,7 @@ Decorators make it possible to annotate and modify classes and properties at des
 Here's an example of setting up Redux without and with a decorator:
 Without a decorator
 
-```python
+```reactjs
 import React from 'react';
 import * as actionCreators from './actionCreators';
 import { bindActionCreators } from 'redux';
@@ -2259,7 +2259,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(MyApp);
 
 Using a decorator
 
-```python
+```reactjs
 import React from 'react';
 import * as actionCreators from './actionCreators';
 import { bindActionCreators } from 'redux';
@@ -2288,20 +2288,20 @@ Both examples above are equivalent, it's just a matter of preference. Also, the 
 That is a curried function
 First, examine this function with two parameters 
 
-```python
+```reactjs
 let add = (x,y) => x + y;
 add(2,3); //=> 5
 ```
 
 Here it is again in curried form 
 
-```python
+```reactjs
 let add = x => y => x + y;
 ```
 
 Here is the same code1 without arrow functions 
 
-```python
+```reactjs
 let add = function (x) {
   return function (y) {
     return x + y;
@@ -2313,17 +2313,17 @@ let add = function (x) {
 Focus on `return`
 It might help to visualize it another way. We know that arrow functions work like this  let's pay particular attention to the return value.
 
-```python
+```reactjs
 let f = someParam => returnValue```
 
 So our `add` function returns a function  we can use parentheses for added clarity. The bolded text is the return value of our function `add`
 
-```python
+```reactjs
 let add = x => (y => x + y)```
 
 In other words `add` of some number ``x returns a function
 
-```python
+```reactjs
 let x = 2;
 add (2) // returns (y => 2 + y)
 ```
@@ -2332,13 +2332,13 @@ add (2) // returns (y => 2 + y)
 Calling curried functions
 So in order to use our curried function, we have to call it a bit differently 
 
-```python
+```reactjs
 add(2)(3); // returns 5
 ```
 
 This is because the first (outer) function call returns a second (inner) function. Only after we call the second function do we actually get the result. This is more evident if we separate the calls on two lines 
 
-```python
+```reactjs
 let add2 = add(2); // returns function(y) { return 2 + y }
 add2(3);           // returns 5
 ```
@@ -2350,7 +2350,7 @@ related: Whats the difference between binding, partial application, and currying
 
 OK, now that we understand how that works, let's look at your code
 
-```python
+```reactjs
 handleChange = field => e => {
   e.preventDefault();
   /// Do something here
@@ -2359,7 +2359,7 @@ handleChange = field => e => {
 
 We'll start by representing it without using arrow functions 
 
-```python
+```reactjs
 handleChange = function(field) {
   return function(e) {
     e.preventDefault();
@@ -2371,7 +2371,7 @@ handleChange = function(field) {
 
 However, because arrow functions lexically bind `this`, it would actually look more like this 
 
-```python
+```reactjs
 handleChange = function(field) {
   return function(e) {
     e.preventDefault();
@@ -2392,7 +2392,7 @@ Cool !
 
 You can listen in componentDidMount, something like this component which just displays the window dimensions (like `<span>1024 x 768</span>`):
 
-```python
+```reactjs
 var WindowDimensions = React.createClass({
     render: function() {
         return <span>{this.state.width} x {this.state.height}</span>;

@@ -16,7 +16,7 @@ If you want to simulate an HTTP redirect, use `location.replace`
 
 For example:
 
-```python
+```javascript
 // similar behavior as an HTTP redirect
 window.location.replace("http://stackoverflow.com");
 
@@ -39,7 +39,7 @@ This article is intended for programmers with some programming experience in a m
 
 
 
-```python
+```javascript
 function sayHello(name) {
   var text = 'Hello ' + name;
   var say = function() { console.log(text); }
@@ -62,7 +62,7 @@ The following code returns a reference to a function:
 
 
 
-```python
+```javascript
 function sayHello2(name) {
   var text = 'Hello ' + name; // Local variable
   var say = function() { console.log(text); }
@@ -80,7 +80,7 @@ The above code has a closure because the anonymous function `function() { consol
 In C and most other common languages, after a function returns, all the local variables are no longer accessible because the stack-frame is destroyed.
 In JavaScript, if you declare a function within another function, then the local variables can remain accessible after returning from the function you called. This is demonstrated above, because we call the function `say2()` after we have returned from `sayHello2()`. Notice that the code that we call references the variable `text`, which was a local variable of the function `sayHello2()`.
 
-```python
+```javascript
 function() { console.log(text); } // Output of say2.toString();
 ```
 
@@ -96,7 +96,7 @@ This example shows that the local variables are not copied  they are kept by ref
 
 
 
-```python
+```javascript
 function say667() {
   // Local variable that ends up within closure
   var num = 42;
@@ -115,7 +115,7 @@ All three global functions have a common reference to the same closure because t
 
 
 
-```python
+```javascript
 var gLogNumber, gIncreaseNumber, gSetNumber;
 function setupSomeGlobals() {
   // Local variable that ends up within closure
@@ -150,7 +150,7 @@ Also `sayAlice()()` just directly calls the function reference returned from `sa
 
 
 
-```python
+```javascript
 function sayAlice() {
     var say = function() { console.log(alice); }
     // Local variable that ends up within closure
@@ -169,7 +169,7 @@ You need to understand the "variable hoisting" feature in Javascript in order to
 
 
 
-```python
+```javascript
 function buildList(list) {
     var result = [];
     for (var i = 0; i < list.length; i++) {
@@ -194,7 +194,7 @@ function testList() {
 
 The line `result.push( function() {console.log(item + ' ' + list[i])}` adds a reference to an anonymous function three times to the result array. If you are not so familiar with anonymous functions think of it like:
 
-```python
+```javascript
 pointer = function() {console.log(item + ' ' + list[i])};
 result.push(pointer);
 ```
@@ -202,7 +202,7 @@ result.push(pointer);
 Note that when you run the example, `"item2 undefined"` is logged three times! This is because just like previous examples, there is only one closure for the local variables for `buildList` (which are `result`, ``i and `item`). When the anonymous functions are called on the line `fnlist[j]()`; they all use the same single closure, and they use the current value for ``i and `item` within that one closure (where ``i has a value of ``3 because the loop had completed, and `item` has a value of `'item2'`). Note we are indexing from 0 hence `item` has a value of `item2`. And the i++ will increment ``i to the value ``3.
 It may be helpful to see what happens when a block-level declaration of the variable `item` is used (via the `let` keyword) instead of a function-scoped variable declaration via the `var` keyword. If that change is made, then each anonymous function in the array `result` has its own closure; when the example is run the output is as follows:
 
-```python
+```javascript
 item0 undefined
 item1 undefined
 item2 undefined
@@ -210,7 +210,7 @@ item2 undefined
 
 If the variable ``i is also defined using `let` instead of `var`, then the output is:
 
-```python
+```javascript
 item0 1
 item1 2
 item2 3
@@ -221,7 +221,7 @@ In this final example, each call to the main function creates a separate closure
 
 
 
-```python
+```javascript
 function newClosure(someNum, someRef) {
     // Local variables that end up within closure
     var num = someNum;
@@ -289,7 +289,7 @@ Original post by Morris can be found in the Internet Archive.
 Here is a list of current possibilities:
 1. (ES6) `includes`go to answer
 
-```python
+```javascript
 var string = "foo",
     substring = "oo";
 string.includes(substring);
@@ -297,7 +297,7 @@ string.includes(substring);
 
 2. ES5 and older `indexOf`
 
-```python
+```javascript
 var string = "foo",
     substring = "oo";
 string.indexOf(substring) !== -1;
@@ -306,7 +306,7 @@ string.indexOf(substring) !== -1;
 `String.prototype.indexOf` returns the position of the string in the other string. If not found, it will return `-1`.
 3. `search`go to answer
 
-```python
+```javascript
 var string = "foo",
     expr = /oo/;
 string.search(expr);
@@ -314,7 +314,7 @@ string.search(expr);
 
 4. lodash includesgo to answer
 
-```python
+```javascript
 var string = "foo",
     substring = "oo";
 _.includes(string, substring);
@@ -322,7 +322,7 @@ _.includes(string, substring);
 
 5. RegExpgo to answer
 
-```python
+```javascript
 var string = "foo",
     expr = /oo/;  // no quotes here
 expr.test(string);
@@ -330,7 +330,7 @@ expr.test(string);
 
 6. Matchgo to answer
 
-```python
+```javascript
 var string = "foo",
     expr = /oo/;
 string.match(expr);
@@ -345,7 +345,7 @@ Performance tests are showing that `indexOf` might be the best choice, if it com
 
 Since the question refers to a single element, this code might be more suitable:
 
-```python
+```javascript
 // Checks css for display:[none|block], ignores visibility:[true|false]
 $(element).is(":visible"); 
 ```
@@ -373,7 +373,7 @@ It disables features that are confusing or poorly thought out.
 Also note you can apply "strict mode" to the whole file... Or you can use it only for a specific function (still quoting from John Resig's article):
 
 
-```python
+```javascript
 // Non-strict code...
 
 (function(){
@@ -399,7 +399,7 @@ For example, a function expression:
 
 
 
-```python
+```javascript
 // TypeError: functionOne is not a function
 functionOne();
 
@@ -414,7 +414,7 @@ And, a function declaration:
 
 
 
-```python
+```javascript
 // Outputs: "Hello!"
 functionTwo();
 
@@ -427,7 +427,7 @@ function functionTwo() {
 
 This also means you can't conditionally define functions using function declarations:
 
-```python
+```javascript
 if (test) {
    // Error or misbehavior
    function functionThree() { doSomething(); }
@@ -442,7 +442,7 @@ The above actually defines `functionThree` irrespective of `test`'s value  unles
 
 Find the `index` of the array element you want to remove, then remove that index with `splice`.
 
-```python
+```javascript
 var array = [2, 5, 9];
 var index = array.indexOf(5);
 if (index > -1) {
@@ -466,7 +466,7 @@ To quote Douglas Crockford's excellent JavaScript: The Good Parts,
 
 JavaScript has two sets of equality operators: `===` and `!==`, and their evil twins `==` and `!=`.  The good ones work the way you would expect.  If the two operands are of the same type and have the same value, then `===` produces `true` and `!==` produces `false`.  The evil twins do the right thing when the operands are of the same type, but if they are of different types, they attempt to coerce the values.  the rules by which they do that are complicated and unmemorable.  These are some of the interesting cases:
 
-```python
+```javascript
 '' == '0'           // false
 0 == ''             // true
 0 == '0'            // true
@@ -487,7 +487,7 @@ The lack of transitivity is alarming.  My advice is to never use the evil twins.
 Update:
 A good point was brought up by @Casebash in the comments and in @Phillipe Laybaert's answer concerning reference types.  For reference types `==` and `===` act consistently with one another (except in a special case).
 
-```python
+```javascript
 var a = [1,2,3];
 var b = [1,2,3];
 
@@ -509,7 +509,7 @@ e === f           // true
 
 The special case is when you compare a literal with an object that evaluates to the same literal, due to its `toString` or `valueOf` method. For example, consider the comparison of a string literal with a string object created by the `String` constructor.
 
-```python
+```javascript
 "abc" == new String("abc")    // true
 "abc" === new String("abc")   // false
 ```
@@ -524,7 +524,7 @@ http://www.ecma-international.org/ecma-262/5.1/#sec-11.9.3
 
 Like this:
 
-```python
+```javascript
 delete myObject.regex;
 // or,
 delete myObject['regex'];
@@ -537,7 +537,7 @@ Demo
 
 
 
-```python
+```javascript
 var myObject = {
     "ircEvent": "PRIVMSG",
     "method": "newURI",
@@ -571,7 +571,7 @@ So then how do you do that? How do you "think in AngularJS"? Here are some gener
 
 In jQuery, we programmatically change the view. We could have a dropdown menu defined as a `ul` like so:
 
-```python
+```javascript
 <ul class="main-menu">
     <li class="active">
         <a href="#/home">Home</a>
@@ -592,14 +592,14 @@ In jQuery, we programmatically change the view. We could have a dropdown menu de
 
 In jQuery, in our application logic, we would activate it with something like:
 
-```python
+```javascript
 $('.main-menu').dropdownMenu();
 ```
 
 When we just look at the view, it's not immediately obvious that there is any functionality here. For small applications, that's fine. But for non-trivial applications, things quickly get confusing and hard to maintain.
 In AngularJS, though, the view is the official record of view-based functionality. Our `ul` declaration would look like this instead:
 
-```python
+```javascript
 <ul class="main-menu" dropdown-menu>
     ...
 </ul>
@@ -613,7 +613,7 @@ Remember: don't design, and then mark up. You must architect, and then design.
 
 This is by far one of the most awesome features of AngularJS and cuts out a lot of the need to do the kinds of DOM manipulations I mentioned in the previous section. AngularJS will automatically update your view so you don't have to! In jQuery, we respond to events and then update content. Something like:
 
-```python
+```javascript
 $.ajax({
   url: '/myEndpoint.json',
   success: function ( data, status ) {
@@ -624,7 +624,7 @@ $.ajax({
 
 For a view that looks like this:
 
-```python
+```javascript
 <ul class="messages" id="log">
 </ul>
 ```
@@ -632,7 +632,7 @@ For a view that looks like this:
 Apart from mixing concerns, we also have the same problems of signifying intent that I mentioned before. But more importantly, we had to manually reference and update a DOM node. And if we want to delete a log entry, we have to code against the DOM for that too. How do we test the logic apart from the DOM? And what if we want to change the presentation?
 This a little messy and a trifle frail. But in AngularJS, we can do this:
 
-```python
+```javascript
 $http( '/myEndpoint.json' ).then( function ( response ) {
     $scope.log.push( { msg: 'Data Received!' } );
 });
@@ -640,7 +640,7 @@ $http( '/myEndpoint.json' ).then( function ( response ) {
 
 And our view can look like this:
 
-```python
+```javascript
 <ul class="messages">
     <li ng-repeat="entry in log">{{ entry.msg }}</li>
 </ul>
@@ -648,7 +648,7 @@ And our view can look like this:
 
 But for that matter, our view could look like this:
 
-```python
+```javascript
 <div class="messages">
     <div class="alert" ng-repeat="entry in log">
         {{ entry.msg }}
@@ -679,13 +679,13 @@ Out of all of the many jQuery plugins you've seen, used, or written, how many of
 In jQuery, the only way to test is often to create the component independently with a sample/demo page against which our tests can perform DOM manipulation. So then we have to develop a component separately and then integrate it into our application. How inconvenient! So much of the time, when developing with jQuery, we opt for iterative instead of test-driven development. And who could blame us?
 But because we have separation of concerns, we can do test-driven development iteratively in AngularJS! For example, let's say we want a super-simple directive to indicate in our menu what our current route is. We can declare what we want in the view of our application:
 
-```python
+```javascript
 <a href="/hello" when-active>Hello</a>
 ```
 
 Okay, now we can write a test for the non-existent `when-active` directive:
 
-```python
+```javascript
 it( 'should add "active" when the route changes', inject(function() {
     var elm = $compile( '<a href="/hello" when-active>Hello</a>' )( $scope );
 
@@ -699,7 +699,7 @@ it( 'should add "active" when the route changes', inject(function() {
 
 And when we run our test, we can confirm that it fails. Only now should we create our directive:
 
-```python
+```javascript
 .directive( 'whenActive', function ( $location ) {
     return {
         scope: true,
@@ -727,7 +727,7 @@ I see lots of developers new to AngularJS using directives as the place to throw
 Think of the logger we programmed in section 3. Even if we put that in a directive, we still want to do it the "Angular Way". It still doesn't take any DOM manipulation! There are lots of times when DOM manipulation is necessary, but it's a lot rarer than you think! Before doing DOM manipulation anywhere in your application, ask yourself if you really need to. There might be a better way.
 Here's a quick example that shows the pattern I see most frequently. We want a toggleable button. (Note: this example is a little contrived and a skosh verbose to represent more complicated cases that are solved in exactly the same way.)
 
-```python
+```javascript
 .directive( 'myDirective', function () {
     return {
         template: '<a class="btn">Toggle me!</a>',
@@ -753,7 +753,7 @@ And fifth, which we've mentioned in previous sections, why are we mixing templat
 
 This directive can be rewritten (even for very complicated cases!) much more simply like so:
 
-```python
+```javascript
 .directive( 'myDirective', function () {
     return {
         scope: true,
@@ -786,7 +786,7 @@ Note: This is a reply to another answer, not a proper response to this question.
 
 I want to note that the `.clone()` method in jQuery only clones DOM elements. In order to clone JavaScript objects, you would do:
 
-```python
+```javascript
 // Shallow copy
 var newObject = jQuery.extend({}, oldObject);
 
@@ -813,7 +813,7 @@ Here is an analogy which hopefully makes the difference between synchronous and 
 Imagine you make a phone call to a friend and ask him to look something up for you. Although it might take a while, you wait on the phone and stare into space, until your friend gives you the answer that you needed.
 The same is happening when you make a function call containing "normal" code:
 
-```python
+```javascript
 function findItem() {
     var item;
     while(item_not_found) {
@@ -835,7 +835,7 @@ Even though `findItem` might take a long time to execute, any code coming after 
 You call your friend again for the same reason. But this time you tell him that you are in a hurry and he should call you back on your mobile phone. You hang up, leave the house and do whatever you planned to do. Once your friend calls you back, you are dealing with the information he gave to you.
 That's exactly what's happening when you do an Ajax request. 
 
-```python
+```javascript
 findItem(function(item) {
     // Do something with item
 });
@@ -867,7 +867,7 @@ Important: You can only use `await` inside an `async` function. That means that 
 You can read more about `async` and `await` on MDN.
 Here is an example that builds on top of delay above:
 
-```python
+```javascript
 // Using 'superagent' which will return a promise.
 var superagent = require('superagent')
 
@@ -913,14 +913,14 @@ Newer browser and node versions support `async/await`. You can also support olde
 A callback is simply a function passed to another function. That other function can call the function passed whenever it is ready. In the context of an asynchronous process, the callback will be called whenever the asynchronous process is done. Usually, the result is passed to the callback.
 In the example of the question, you can make `foo` accept a callback and use it as `success` callback. So this
 
-```python
+```javascript
 var result = foo();
 // Code that depends on 'result'
 ```
 
 becomes
 
-```python
+```javascript
 foo(function(result) {
     // Code that depends on 'result'
 });
@@ -928,7 +928,7 @@ foo(function(result) {
 
 Here we defined the function "inline" but you can pass any function reference:
 
-```python
+```javascript
 function myCallback(result) {
     // Code that depends on 'result'
 }
@@ -938,7 +938,7 @@ foo(myCallback);
 
 `foo` itself is defined as follows:
 
-```python
+```javascript
 function foo(callback) {
     $.ajax({
         // ...
@@ -950,7 +950,7 @@ function foo(callback) {
 `callback` will refer to the function we pass to `foo` when we call it and we simply pass it on to `success`. I.e. once the Ajax request is successful, `$.ajax` will call `callback` and pass the response to the callback (which can be referred to with `result`, since this is how we defined the callback).
 You can also process the response before passing it to the callback:
 
-```python
+```javascript
 function foo(callback) {
     $.ajax({
         // ...
@@ -973,7 +973,7 @@ Promises are containers for future values. When the promise receives the value (
 The advantage over plain callbacks is that they allow you to decouple your code and they are easier to compose.
 Here is a simple example of using a promise:
 
-```python
+```javascript
 function delay() {
   // `delay` returns a promise
   return new Promise(function(resolve, reject) {
@@ -996,7 +996,7 @@ delay()
 
 Applied to our Ajax call we could use promises like this:
 
-```python
+```javascript
 function ajax(url) {
   return new Promise(function(resolve, reject) {
     var xhr = new XMLHttpRequest();
@@ -1024,7 +1024,7 @@ Side note: jQuery's deferred objects
 Deferred objects are jQuery's custom implementation of promises (before the Promise API was standardized). They behave almost like promises but expose a slightly different API.
 Every Ajax method of jQuery already returns a "deferred object" (actually a promise of a deferred object) which you can just return from your function:
 
-```python
+```javascript
 function ajax() {
     return $.ajax(...);
 }
@@ -1039,7 +1039,7 @@ ajax().done(function(result) {
 Side note: Promise gotchas
 Keep in mind that promises and deferred objects are just containers for a future value, they are not the value itself. For example, suppose you had the following:
 
-```python
+```javascript
 function checkPassword() {
     return $.ajax({
         url: '/password',
@@ -1060,7 +1060,7 @@ if (checkPassword()) {
 This code misunderstands the above asynchrony issues. Specifically, `$.ajax()` doesn't freeze the code while it checks the '/password' page on your server - it sends a request to the server and while it waits, immediately returns a jQuery Ajax Deferred object, not the response from the server. That means the `if` statement is going to always get this Deferred object, treat it as `true`, and proceed as though the user is logged in. Not good.
 But the fix is easy:
 
-```python
+```javascript
 checkPassword()
 .done(function(r) {
     if (r) {
@@ -1086,7 +1086,7 @@ jQuery
 If you use jQuery, you can set the `async` option to `false`. Note that this option is deprecated since jQuery 1.8.
 You can then either still use a `success` callback or access the `responseText` property of the jqXHR object:
 
-```python
+```javascript
 function foo() {
     var jqXHR = $.ajax({
         //...
@@ -1110,7 +1110,7 @@ Note that currently, browser support for ES6 Modules is not particularly great, 
 Thus, you will currently still need to use build and/or transpilation tools to valid JavaScript that will run in without any requirement for the user to use those browser versions or enable any flags.
 Once ES6 Modules are commonplace, here is how you would go about using them:
 
-```python
+```javascript
 // module.js
 export function hello() {
   return "Hello";
@@ -1118,7 +1118,7 @@ export function hello() {
 ```
 
 
-```python
+```javascript
 // main.js
 import {hello} from 'module'; // or './module'
 let val = hello(); // val is "Hello";
@@ -1127,7 +1127,7 @@ let val = hello(); // val is "Hello";
 Node.js require
 Node.js is currently using a module.exports/require system.  You can use `babel` to transpile if you want the `import` syntax.    
 
-```python
+```javascript
 // mymodule.js
 module.exports = {
    hello: function() {
@@ -1137,7 +1137,7 @@ module.exports = {
 ```
 
 
-```python
+```javascript
 // server.js
 const myModule = require('./mymodule');
 let val = myModule.hello(); // val is "Hello"   
@@ -1149,7 +1149,7 @@ You could load an additional script with an AJAX call and then use `eval` to run
 jQuery Loading
 The jQuery library provides loading functionality in one line:
 
-```python
+```javascript
 $.getScript("my_lovely_script.js", function() {
    alert("Script loaded but not necessarily executed.");
 });
@@ -1160,7 +1160,7 @@ You could add a script tag with the script URL into the HTML. To avoid the overh
 The script can even reside on a different server. Furthermore, the browser evaluates the code. The `<script>` tag can be injected into either the web page `<head>`, or inserted just before the closing `</body>` tag.
 Here is an example of how this could work:
 
-```python
+```javascript
 function dynamicallyLoadScript(url) {
     var script = document.createElement("script"); // Make a script DOM node
     script.src = url; // Set it's src to the provided URL
@@ -1178,7 +1178,7 @@ Now, there is a big issue you must know about. Doing that implies that you remot
 It means that if you use these tricks directly, you won't be able to use your newly loaded code the next line after you asked it to be loaded, because it will be still loading.
 For example: `my_lovely_script.js` contains `MySuperObject`:
 
-```python
+```javascript
 var js = document.createElement("script");
 
 js.type = "text/javascript";
@@ -1195,7 +1195,7 @@ Then you reload the page hitting F5. And it works! Confusing...
 So what to do about it ?
 Well, you can use the hack the author suggests in the link I gave you. In summary, for people in a hurry, he uses an event to run a callback function when the script is loaded. So you can put all the code using the remote library in the callback function. For example:
 
-```python
+```javascript
 function loadScript(url, callback)
 {
     // Adding the script tag to the head as suggested before
@@ -1216,7 +1216,7 @@ function loadScript(url, callback)
 
 Then you write the code you want to use AFTER the script is loaded in a lambda function:
 
-```python
+```javascript
 var myPrettyCode = function() {
    // Here, do whatever you want
 };
@@ -1224,7 +1224,7 @@ var myPrettyCode = function() {
 
 Then you run all that:
 
-```python
+```javascript
 loadScript("my_lovely_script.js", myPrettyCode);
 ```
 
@@ -1267,7 +1267,7 @@ Details:
 1. Use `forEach` and related
 If you're using an environment that supports the `Array` features of ES5 (directly or using a shim), you can use the new `forEach` (`spec` | `MDN`):
 
-```python
+```javascript
 var a = ["a", "b", "c"];
 a.forEach(function(entry) {
     console.log(entry);
@@ -1290,7 +1290,7 @@ Additionally, `forEach` is the "loop through them all" function, but ES5 defined
 2. Use a simple `for` loop
 Sometimes the old ways are the best:
 
-```python
+```javascript
 var index;
 var a = ["a", "b", "c"];
 for (index = 0; index < a.length; ++index) {
@@ -1300,7 +1300,7 @@ for (index = 0; index < a.length; ++index) {
 
 If the length of the array won't change during the loop, and it's in performance-sensitive code (unlikely), a slightly more complicated version grabbing the length up front might be a tiny bit faster:
 
-```python
+```javascript
 var index, len;
 var a = ["a", "b", "c"];
 for (index = 0, len = a.length; index < len; ++index) {
@@ -1310,7 +1310,7 @@ for (index = 0, len = a.length; index < len; ++index) {
 
 And/or counting backward:
 
-```python
+```javascript
 var index;
 var a = ["a", "b", "c"];
 for (index = a.length - 1; index >= 0; --index) {
@@ -1321,7 +1321,7 @@ for (index = a.length - 1; index >= 0; --index) {
 But with modern JavaScript engines, it's rare you need to eke out that last bit of juice.
 In ES2015 and higher, you can make your index and value variables local to the `for` loop:
 
-```python
+```javascript
 let a = ["a", "b", "c"];
 for (let index = 0; index < a.length; ++index) {
     let value = a[index];
@@ -1332,7 +1332,7 @@ for (let index = 0; index < a.length; ++index) {
 
 And when you do that, not just `value` but also `index` is recreated for each loop iteration, meaning closures created in the loop body keep a reference to the `index` (and `value`) created for that specific iteration:
 
-```python
+```javascript
 let divs = document.querySelectorAll("div");
 for (let index = 0; index < divs.length; ++index) {
     divs[index].addEventListener('click', e => {
@@ -1346,7 +1346,7 @@ If you had five divs, you'd get "Index is: 0" if you clicked the first and "Inde
 You'll get people telling you to use `for-in`, but that's not what `for-in` is for. `for-in` loops through the enumerable properties of an object, not the indexes of an array. The order is not guaranteed, not even in ES2015 (ES6). ES2015 does define an order to object properties (via `[[OwnPropertyKeys]]`, `[[Enumerate]]`, and things that use them like `Object.getOwnPropertyKeys`), but it does not define that `for-in` will follow that order. (Details in this other answer.)
 Still, it can be useful, particularly for sparse arrays, if you use appropriate safeguards:
 
-```python
+```javascript
 // `a` is a sparse array
 var key;
 var a = [];
@@ -1371,7 +1371,7 @@ That the key is a base-10 numeric string in its normal string form and its value
 That's a tiny bit of added overhead per loop iteration on most arrays, but if you have a sparse array, it can be a more efficient way to loop because it only loops for entries that actually exist. E.g., for the array above, we loop a total of three times (for keys `"0"`, `"10"`, and `"10000"` remember, they're strings), not 10,001 times.
 Now, you won't want to write that every time, so you might put this in your toolkit:
 
-```python
+```javascript
 function arrayHasOwnIndex(array, prop) {
     return array.hasOwnProperty(prop) && /^0$|^[1-9]\d*$/.test(prop) && prop <= 4294967294; // 2^32 - 2
 }
@@ -1379,7 +1379,7 @@ function arrayHasOwnIndex(array, prop) {
 
 And then we'd use it like this:
 
-```python
+```javascript
 for (key in a) {
     if (arrayHasOwnIndex(a, key)) {
         console.log(a[key]);
@@ -1389,7 +1389,7 @@ for (key in a) {
 
 Or if you're interested in just a "good enough for most cases" test, you could use this, but while it's close, it's not quite correct:
 
-```python
+```javascript
 for (key in a) {
     // "Good enough" for most cases
     if (String(parseInt(key, 10)) === key && a.hasOwnProperty(key)) {
@@ -1401,7 +1401,7 @@ for (key in a) {
 4. Use `for-of` (use an iterator implicitly) (ES2015+)
 ES2015 adds iterators to JavaScript. The easiest way to use iterators is the new `for-of` statement. It looks like this:
 
-```python
+```javascript
 var val;
 var a = ["a", "b", "c"];
 for (val of a) {
@@ -1419,7 +1419,7 @@ Under the covers, that gets an iterator from the array and loops through it, get
 5. Use an iterator explicitly (ES2015+)
 Sometimes, you might want to use an iterator explicitly. You can do that, too, although it's a lot clunkier than `for-of`. It looks like this:
 
-```python
+```javascript
 var a = ["a", "b", "c"];
 var it = a.values();
 var entry;
@@ -1447,7 +1447,7 @@ Use `forEach` and related (ES5+)
 The various functions on `Array.prototype` are "intentionally generic" and can usually be used on array-like objects via `Function#call` or `Function#apply`. (See the Caveat for host-provided objects at the end of this answer, but it's a rare issue.)
 Suppose you wanted to use `forEach` on a `Node`'s `childNodes` property. You'd do this:
 
-```python
+```javascript
 Array.prototype.forEach.call(node.childNodes, function(child) {
     // Do something with `child`
 });
@@ -1455,7 +1455,7 @@ Array.prototype.forEach.call(node.childNodes, function(child) {
 
 If you're going to do that a lot, you might want to grab a copy of the function reference into a variable for reuse, e.g.:
 
-```python
+```javascript
 // (This is all presumably in some scoping function)
 var forEach = Array.prototype.forEach;
 
@@ -1480,13 +1480,13 @@ Other times, you may want to convert an array-like object into a true array. Doi
 Use the `slice` method of arrays
 We can use the `slice` method of arrays, which like the other methods mentioned above is "intentionally generic" and so can be used with array-like objects, like this:
 
-```python
+```javascript
 var trueArray = Array.prototype.slice.call(arrayLikeObject);
 ```
 
 So for instance, if we want to convert a `NodeList` into a true array, we could do this:
 
-```python
+```javascript
 var divs = Array.prototype.slice.call(document.querySelectorAll("div"));
 ```
 
@@ -1494,26 +1494,26 @@ See the Caveat for host-provided objects below. In particular, note that this wi
 Use spread notation (`...`)
 It's also possible to use ES2015's spread notation (MDN currently calls it an operator; it isn't one), with JavaScript engines that support this feature:
 
-```python
+```javascript
 var trueArray = [...iterableObject];
 ```
 
 So for instance, if we want to convert a `NodeList` into a true array, with spread syntax this becomes quite succinct:
 
-```python
+```javascript
 var divs = [...document.querySelectorAll("div")];
 ```
 
 Use `Array.from` (spec) | (MDN)
 `Array.from` (ES2015, but shimmable) creates an array from an array-like object, optionally passing the entries through a mapping function first. So:
 
-```python
+```javascript
 var divs = Array.from(document.querySelectorAll("div"));
 ```
 
 Or if you wanted to get an array of the tag names of the elements with a given class, you'd use the mapping function:
 
-```python
+```javascript
 // Arrow function (ES2015):
 var divs = Array.from(document.querySelectorAll(".some-class"), element => element.tagName);
 
@@ -1538,7 +1538,7 @@ Host objects may implement these internal methods in any manner unless specified
 I use `javascript:void(0)`.
 Three reasons. Encouraging the use of ``# amongst a team of developers inevitably leads to some using the return value of the function called like this:
 
-```python
+```javascript
 function doSomething() {
     //Some code
     return false;
@@ -1549,13 +1549,13 @@ But then they forget to use `return doSomething()` in the onclick and just use `
 A second reason for avoiding ``# is that the final `return false;` will not execute if the called function throws an error. Hence the developers have to also remember to handle any error appropriately in the called function.
 A third reason is that there are cases where the `onclick` event property is assigned dynamically.  I prefer to be able to call a function or assign it dynamically without having to code the function specifically for one method of attachment or another. Hence my `onclick` (or on anything) in HTML markup look like this:
 
-```python
+```javascript
 onclick="someFunc.call(this)"
 ```
 
 OR
 
-```python
+```javascript
 onclick="someFunc.apply(this, arguments)"
 ```
 
@@ -1574,7 +1574,7 @@ The second is clearly much easier to communicate.
 
 Use the new `.prop()` method:
 
-```python
+```javascript
 $('.myCheckbox').prop('checked', true);
 $('.myCheckbox').prop('checked', false);
 ```
@@ -1584,14 +1584,14 @@ $('.myCheckbox').prop('checked', false);
 
 The `.prop()` method is not available, so you need to use `.attr()`.
 
-```python
+```javascript
 $('.myCheckbox').attr('checked', true);
 $('.myCheckbox').attr('checked', false);
 ```
 
 Note that this is the approach used by jQuery's unit tests prior to version 1.6 and is preferable to using
 
-```python
+```javascript
 $('.myCheckbox').removeAttr('checked');
 ```
 
@@ -1602,7 +1602,7 @@ For more context, some incomplete discussion of the changes to the handling of t
 
 If you're working with just one element, you can always just modify the `HTMLInputElement`'s `.checked` property:
 
-```python
+```javascript
 $('.myCheckbox')[0].checked = true;
 $('.myCheckbox')[0].checked = false;
 ```
@@ -1622,7 +1622,7 @@ This does not address the issue of cross-site request forgery.
 
 **3266 Votes**, pupeno
 
-```python
+```javascript
 var timeStampInMs = window.performance && window.performance.now && window.performance.timing && window.performance.timing.navigationStart ? window.performance.now() + window.performance.timing.navigationStart : Date.now();
 
 console.log(timeStampInMs, Date.now());```
@@ -1632,7 +1632,7 @@ console.log(timeStampInMs, Date.now());```
 
 Short & Snazzy:
 
-```python
+```javascript
 + new Date()
 ```
 
@@ -1641,7 +1641,7 @@ Details:
 On almost all current browsers you can use `Date.now()` to get the UTC timestamp in milliseconds; a notable exception to this is IE8 and earlier (see compatibility table).
 You can easily make a shim for this, though:
 
-```python
+```javascript
 if (!Date.now) {
     Date.now = function() { return new Date().getTime(); }
 }
@@ -1649,32 +1649,32 @@ if (!Date.now) {
 
 To get the timestamp in seconds, you can use:
 
-```python
+```javascript
 Math.floor(Date.now() / 1000)
 ```
 
 Or alternatively you could use:
 
-```python
+```javascript
 Date.now() / 1000 | 0
 ```
 
 Which should be slightly faster, but also less readable (also see this answer).
 I would recommend using `Date.now()` (with compatibility shim). It's slightly better because it's shorter & doesn't create a new `Date` object. However, if you don't want a shim & maximum compatibility, you could use the "old" method to get the timestamp in milliseconds:
 
-```python
+```javascript
 new Date().getTime()
 ```
 
 Which you can then convert to seconds like this:
 
-```python
+```javascript
 Math.round(new Date().getTime()/1000)
 ```
 
 And you can also use the `valueOf` method which we showed above:
 
-```python
+```javascript
 new Date().valueOf()
 ```
 
@@ -1705,7 +1705,7 @@ Notice that some frameworks implement this as a function, while others add the f
 
 Using regular expressions is probably the best way. You can see a bunch of tests here (taken from chromium)
 
-```python
+```javascript
 function validateEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
@@ -1714,7 +1714,7 @@ function validateEmail(email) {
 
 Here's the example of regular expresion that accepts unicode:
 
-```python
+```javascript
 var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 ```
 
@@ -1723,7 +1723,7 @@ Here's an example of the above in action:
 
 
 
-```python
+```javascript
 function validateEmail(email) {
   var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(email);
@@ -1747,7 +1747,7 @@ function validate() {
 $("#validate").bind("click", validate);```
 
 
-```python
+```javascript
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
 <form>
@@ -1764,7 +1764,7 @@ $("#validate").bind("click", validate);```
 
 There have been a couple attempts at this. The question is: do you want actual GUIDs, or just random numbers that look like GUIDs? It's easy enough to generate random numbers.
 
-```python
+```javascript
 function guid() {
   function s4() {
     return Math.floor((1 + Math.random()) * 0x10000)
@@ -1783,7 +1783,7 @@ Edit: not correct - RFC4122 allows random ("version 4") GUIDs.  See other answer
 Note: the provided code snippet does not follow RFC4122 which requires that the version (``4) has to be integrated into the generated output string. Do not use this answer if you need compliant GUIDs.
 Use:
 
-```python
+```javascript
 var uuid = guid();
 ```
 
@@ -1791,7 +1791,7 @@ Demo:
 
 
 
-```python
+```javascript
 function guid() {
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
     s4() + '-' + s4() + s4() + s4();
@@ -1808,11 +1808,11 @@ document.getElementById('jsGenId').addEventListener('click', function() {
 })```
 
 
-```python
+```javascript
 input { font-family: monospace; }```
 
 
-```python
+```javascript
 <button id="jsGenId" type="button">Generate GUID</button>
 <br>
 <input id="jsIdResult" type="text" placeholder="Results will be placed here..." readonly size="40"/>```
@@ -1827,7 +1827,7 @@ Demo:
 
 
 
-```python
+```javascript
 var html = '';
 
 write('#### global ####\n');
@@ -1903,7 +1903,7 @@ blockScoped();
 document.getElementById('results').innerHTML = html;```
 
 
-```python
+```javascript
 <pre id="results"></pre>```
 
 
@@ -1912,14 +1912,14 @@ document.getElementById('results').innerHTML = html;```
 Global:
 They are very similar when used like this outside a function block.
 
-```python
+```javascript
 let me = 'go';  // globally scoped
 var i = 'able'; // globally scoped
 ```
 
 However, global variables defined with `let` will not be added as properties on the global `window` object like those defined with `var`.
 
-```python
+```javascript
 console.log(window.me); // undefined
 console.log(window.i); // 'able'
 ```
@@ -1927,7 +1927,7 @@ console.log(window.i); // 'able'
 Function:
 They are identical when used like this in a function block.
 
-```python
+```javascript
 function ingWithinEstablishedParameters() {
     let terOfRecommendation = 'awesome worker!'; //function block scoped
     var sityCheerleading = 'go!'; //function block scoped
@@ -1937,7 +1937,7 @@ function ingWithinEstablishedParameters() {
 Block:
 Here is the difference. `let` is only visible in the `for()` loop and `var` is visible to the whole function.
 
-```python
+```javascript
 function allyIlliterate() {
     //tuce is *not* visible out here
 
@@ -1963,14 +1963,14 @@ function byE40() {
 Redeclaration:
 Assuming strict mode, `var` will let you re-declare the same variable in the same scope. On the other hand, `let` will not:
 
-```python
+```javascript
 'use strict';
 let me = 'foo';
 let me = 'bar'; // SyntaxError: Identifier 'me' has already been declared
 ```
 
 
-```python
+```javascript
 'use strict';
 var me = 'foo';
 var me = 'bar'; // No problem, `me` is replaced.
@@ -1985,7 +1985,7 @@ Note: In general, extending the built-in prototypes in JavaScript is generally n
 
 Regular Expression Based Implementation
 
-```python
+```javascript
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);
@@ -1994,7 +1994,7 @@ String.prototype.replaceAll = function(search, replacement) {
 
 Split and Join (Functional) Implementation
 
-```python
+```javascript
 String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.split(search).join(replacement);
@@ -2009,7 +2009,7 @@ Check out this benchmark running these two implementations against each other.
 As noted in the comment below by @ThomasLeduc and others, there could be an issue with the regular expression-based implementation if `search` contains certain characters which are reserved as special characters in regular expressions. The implementation assumes that the caller will escape the string beforehand or will only pass strings that are without the characters in the table in Regular Expressions (MDN).
 MDN also provides an implementation to escape our strings. It would be nice if this was also standardized as `RegExp.escape(str)`, but alas, it does not exist:
 
-```python
+```javascript
 function escapeRegExp(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
@@ -2021,7 +2021,7 @@ We could call `escapeRegExp` within our `String.prototype.replaceAll` implementa
 
 **2859 Votes**, Robert Wills
 
-```python
+```javascript
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -2037,7 +2037,7 @@ Use the `push()` function to append to an array:
 
 
 
-```python
+```javascript
 // initialize array
 var arr = [
     "Hi",
@@ -2055,7 +2055,7 @@ console.log(arr);```
 
 Will print
 
-```python
+```javascript
 ["Hi", "Hello", "Bonjour", "Hola"]
 ```
 
@@ -2064,7 +2064,7 @@ You can use the `push()` function to append more than one value to an array in a
 
 
 
-```python
+```javascript
 // initialize array
 var arr = [ "Hi", "Hello", "Bonjour", "Hola" ];
 
@@ -2081,7 +2081,7 @@ for (var i = 0; i < arr.length; i++) {
 
 Will print
 
-```python
+```javascript
 Hi
 Hello
 Bonjour
@@ -2096,7 +2096,7 @@ If you want to add the items of one array to another array, you can use `firstAr
 
 
 
-```python
+```javascript
 var arr = [
     "apple",
     "banana",
@@ -2116,7 +2116,7 @@ console.log(arr);```
 
 Will print
 
-```python
+```javascript
 ["apple", "banana", "cherry", "dragonfruit", "elderberry", "fig"]
 ```
 
@@ -2126,7 +2126,7 @@ Will print
 
 You don't need jQuery for that purpose. You can use just some pure JavaScript:
 
-```python
+```javascript
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
     name = name.replace(/[\[\]]/g, "\\$&");
@@ -2140,7 +2140,7 @@ function getParameterByName(name, url) {
 
 Usage:
 
-```python
+```javascript
 // query string: ?foo=lorem&bar=&baz
 var foo = getParameterByName('foo'); // "lorem"
 var bar = getParameterByName('bar'); // "" (present with empty value)
@@ -2168,7 +2168,7 @@ Sample code:
 
 
 
-```python
+```javascript
 function theFunction(name, profession) {
     console.log("My name is " + name + " and I am a " + profession +".");
 }
@@ -2215,7 +2215,7 @@ Here is a simple example:
 
 
 
-```python
+```javascript
 function fallbackCopyTextToClipboard(text) {
   var textArea = document.createElement("textarea");
   textArea.value = text;
@@ -2258,7 +2258,7 @@ copyJaneBtn.addEventListener('click', function(event) {
 });```
 
 
-```python
+```javascript
 <div style="display:inline-block; vertical-align:top;">
   <button class="js-copy-bob-btn">Set clipboard to BOB</button><br /><br />
   <button class="js-copy-jane-btn">Set clipboard to JANE</button>
@@ -2281,7 +2281,7 @@ Reference Async Clipboard API draft documentation
 
 Note that there is an ability to "request permission" and test for access to the clipboard via the permissions API in Chrome 66.
 
-```python
+```javascript
 var text = "Example text to appear on clipboard";
 navigator.clipboard.writeText(text).then(function() {
   console.log('Async: Copying to clipboard was successful!');
@@ -2308,7 +2308,7 @@ Opera 29+ (based on Chromium 42, ~April 2015)
 
 
 
-```python
+```javascript
 var copyTextareaBtn = document.querySelector('.js-textareacopybtn');
 
 copyTextareaBtn.addEventListener('click', function(event) {
@@ -2326,7 +2326,7 @@ copyTextareaBtn.addEventListener('click', function(event) {
 });```
 
 
-```python
+```javascript
 <p>
   <button class="js-textareacopybtn" style="vertical-align:top;">Copy Textarea</button>
   <textarea class="js-copytextarea">Hello I'm some text</textarea>
@@ -2344,7 +2344,7 @@ Tested with Google Chrome 44, Firefox 42.0a1 and IE 11.0.8600.17814.
 
 
 
-```python
+```javascript
 function copyTextToClipboard(text) {
   var textArea = document.createElement("textarea");
 
@@ -2416,7 +2416,7 @@ copyJaneBtn.addEventListener('click', function(event) {
 });```
 
 
-```python
+```javascript
 <div style="display:inline-block; vertical-align:top;">
   <button class="js-copy-bob-btn">Set clipboard to BOB</button><br /><br />
   <button class="js-copy-jane-btn">Set clipboard to JANE</button>
@@ -2468,7 +2468,7 @@ Any benefit to using event.preventDefault() over "return false" to cancel out an
 With HTML5 you can make file uploads with Ajax and jQuery. Not only that, you can do file validations (name, size, and MIME type) or handle the progress event with the HTML5 progress tag (or a div). Recently I had to make a file uploader, but I didn't want to use Flash nor Iframes or plugins and after some research I came up with the solution.
 The HTML:
 
-```python
+```javascript
 <form enctype="multipart/form-data">
     <input name="file" type="file" />
     <input type="button" value="Upload" />
@@ -2478,7 +2478,7 @@ The HTML:
 
 First, you can do some validation if you want. For example, in the onChange event of the file:
 
-```python
+```javascript
 $(':file').on('change', function() {
     var file = this.files[0];
     if (file.size > 1024) {
@@ -2491,7 +2491,7 @@ $(':file').on('change', function() {
 
 Now the Ajax submit with the button's click:
 
-```python
+```javascript
 $(':button').on('click', function() {
     $.ajax({
         // Your server script to process the upload
@@ -2539,13 +2539,13 @@ As you can see, with HTML5 (and some research) file uploading not only becomes p
 
 Use:
 
-```python
+```javascript
 window.location.href 
 ```
 
 As noted in the comments, the line below works, but it is bugged for Firefox.
 
-```python
+```javascript
 document.URL;
 ```
 
@@ -2557,7 +2557,7 @@ See URL of type DOMString, readonly.
 
 Use:
 
-```python
+```javascript
 if (typeof something === "undefined") {
     alert("something is undefined");
 }
@@ -2565,7 +2565,7 @@ if (typeof something === "undefined") {
 
 If an object variable which have some properties you can use same thing like this:
 
-```python
+```javascript
 if (typeof my_obj.someproperties === "undefined"){
     console.log('the property is not available...'); // print into console
 }
@@ -2600,7 +2600,7 @@ Simply add `textToHalfStyle` class to the element containing the text.
 
 
 
-```python
+```javascript
 // jQuery for automated mode
 jQuery(function($) {
     var text, chars, $el, i, output;
@@ -2629,7 +2629,7 @@ jQuery(function($) {
 });```
 
 
-```python
+```javascript
 .halfStyle {
     position: relative;
     display: inline-block;
@@ -2652,7 +2652,7 @@ jQuery(function($) {
 }```
 
 
-```python
+```javascript
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
 <p>Single Characters:</p>
@@ -2678,7 +2678,7 @@ Everything is the same, only more advanced CSS does the magic.
 
 
 
-```python
+```javascript
 jQuery(function($) {
     var text, chars, $el, i, output;
 
@@ -2706,7 +2706,7 @@ jQuery(function($) {
 });```
 
 
-```python
+```javascript
 .halfStyle {
     position: relative;
     display: inline-block;
@@ -2745,7 +2745,7 @@ jQuery(function($) {
 }```
 
 
-```python
+```javascript
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <p>Single Characters:</p>
 <span class="halfStyle" data-content="X">X</span>
@@ -2774,7 +2774,7 @@ Now that we know what is possible, let's create some variations.
 
 
 
-```python
+```javascript
 // jQuery for automated mode
 jQuery(function($) {
     var text, chars, $el, i, output;
@@ -2803,7 +2803,7 @@ jQuery(function($) {
 });```
 
 
-```python
+```javascript
 .halfStyle {
   position: relative;
   display: inline-block;
@@ -2840,7 +2840,7 @@ jQuery(function($) {
 }```
 
 
-```python
+```javascript
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <p>Single Characters:</p>
 <span class="halfStyle" data-content="X">X</span>
@@ -2866,7 +2866,7 @@ jQuery(function($) {
 
 
 
-```python
+```javascript
 // jQuery for automated mode
 jQuery(function($) {
     var text, chars, $el, i, output;
@@ -2895,7 +2895,7 @@ jQuery(function($) {
 });```
 
 
-```python
+```javascript
 .halfStyle { /* base char and also the right 1/3 */
     position: relative;
     display: inline-block;
@@ -2934,7 +2934,7 @@ jQuery(function($) {
 }```
 
 
-```python
+```javascript
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
 <p>Single Characters:</p>
@@ -2961,7 +2961,7 @@ jQuery(function($) {
 
 
 
-```python
+```javascript
 // jQuery for automated mode
 jQuery(function($) {
     var text, chars, $el, i, output;
@@ -2990,7 +2990,7 @@ jQuery(function($) {
 });```
 
 
-```python
+```javascript
 .halfStyle { /* base char and also the bottom 1/3 */
   position: relative;
   display: inline-block;
@@ -3029,7 +3029,7 @@ jQuery(function($) {
 }```
 
 
-```python
+```javascript
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <p>Single Characters:</p>
 <span class="halfStyle" data-content="X">X</span>
@@ -3055,7 +3055,7 @@ jQuery(function($) {
 
 
 
-```python
+```javascript
 // jQuery for automated mode
 jQuery(function($) {
     var text, chars, $el, i, output;
@@ -3084,7 +3084,7 @@ jQuery(function($) {
 });```
 
 
-```python
+```javascript
 body {
     background-color: black;
 }
@@ -3119,7 +3119,7 @@ body {
 }```
 
 
-```python
+```javascript
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <p>Single Characters:</p>
 <span class="halfStyle" data-content="X">X</span>
@@ -3145,7 +3145,7 @@ body {
 
 
 
-```python
+```javascript
 // jQuery for automated mode
 jQuery(function($) {
     var text, chars, $el, i, output;
@@ -3174,7 +3174,7 @@ jQuery(function($) {
 });```
 
 
-```python
+```javascript
 .halfStyle {
     position: relative;
     display: inline-block;
@@ -3202,7 +3202,7 @@ jQuery(function($) {
 }```
 
 
-```python
+```javascript
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <p>Single Characters:</p>
 <span class="halfStyle" data-content="X">X</span>
@@ -3231,7 +3231,7 @@ Also the CSS style-sets' class definitions match the `[-CustomClassName-]` part 
 
 
 
-```python
+```javascript
 jQuery(function($) {
     var halfstyle_text, halfstyle_chars, $halfstyle_el, halfstyle_i, halfstyle_output, halfstyle_style;
 
@@ -3260,7 +3260,7 @@ jQuery(function($) {
 });```
 
 
-```python
+```javascript
 /* start half-style hs-base */
 
 .halfStyle.hs-base {
@@ -3394,7 +3394,7 @@ jQuery(function($) {
 /* end half-style hs-KevinGranger```
 
 
-```python
+```javascript
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <p>
     <span class="textToHalfStyle" data-halfstyle="hs-base">Half-style, please.</span>
@@ -3420,7 +3420,7 @@ jQuery(function($) {
 
 Use a sequential `for` loop:
 
-```python
+```javascript
 var myStringArray = ["Hello","World"];
 var arrayLength = myStringArray.length;
 for (var i = 0; i < arrayLength; i++) {
@@ -3438,7 +3438,7 @@ Inherited properties are also enumerated.
 The second point is that it can give you a lot of problems, for example, if you extend the `Array.prototype` object to include a method there, that property will be also enumerated.
 For example:
 
-```python
+```javascript
 Array.prototype.foo = "foo!";
 var array = ['a', 'b', 'c'];
 
@@ -3451,7 +3451,7 @@ The above code will alert, "a", "b", "c" and "foo!".
 That be particularly a problem if you use some library that relies heavily on native prototypes augmention (such as MooTools for example).
 The `for-in` statement as I said before is there to enumerate object properties, for example:
 
-```python
+```javascript
 var obj = {
   "a": 1,
   "b": 2,
@@ -3483,7 +3483,7 @@ To do this for any object in JavaScript will not be simple or straightforward. Y
 In addition to non-enumerable attributes, you'll encounter a tougher problem when you try to copy objects that have hidden properties. For example, `prototype` is a hidden property of a function. Also, an object's prototype is referenced with the attribute `__proto__`, which is also hidden, and will not be copied by a for/in loop iterating over the source object's attributes. I think `__proto__` might be specific to Firefox's JavaScript interpreter and it may be something different in other browsers, but you get the picture. Not everything is enumerable. You can copy a hidden attribute if you know its name, but I don't know of any way to discover it automatically.
 Yet another snag in the quest for an elegant solution is the problem of setting up the prototype inheritance correctly. If your source object's prototype is `Object`, then simply creating a new general object with `{}` will work, but if the source's prototype is some descendant of `Object`, then you are going to be missing the additional members from that prototype which you skipped using the `hasOwnProperty` filter, or which were in the prototype, but weren't enumerable in the first place. One solution might be to call the source object's `constructor` property to get the initial copy object and then copy over the attributes, but then you still will not get non-enumerable attributes. For example, a `Date` object stores its data as a hidden member:
 
-```python
+```javascript
 function clone(obj) {
     if (null == obj || "object" != typeof obj) return obj;
     var copy = obj.constructor();
@@ -3505,7 +3505,7 @@ setTimeout(function(){
 The date string for `d1` will be 5 seconds behind that of `d2`. A way to make one `Date` the same as another is by calling the `setTime` method, but that is specific to the `Date` class. I don't think there is a bullet-proof general solution to this problem, though I would be happy to be wrong!
 When I had to implement general deep copying I ended up compromising by assuming that I would only need to copy a plain `Object`, `Array`, `Date`, `String`, `Number`, or `Boolean`. The last 3 types are immutable, so I could perform a shallow copy and not worry about it changing. I further assumed that any elements contained in `Object` or `Array` would also be one of the 6 simple types in that list. This can be accomplished with code like the following:
 
-```python
+```javascript
 function clone(obj) {
     var copy;
 
@@ -3543,7 +3543,7 @@ function clone(obj) {
 
 The above function will work adequately for the 6 simple types I mentioned, as long as the data in the objects and arrays form a tree structure. That is, there isn't more than one reference to the same data in the object. For example:
 
-```python
+```javascript
 // This would be cloneable:
 var tree = {
     "left"  : { "left" : null, "right" : null, "data" : 3 },
@@ -3575,7 +3575,7 @@ It will not be able to handle any JavaScript object, but it may be sufficient fo
 
 In JavaScript, everything is 'truthy' or 'falsy', and for numbers ``0 (and NaN) means `false`, everything else `true`. So you could write:
 
-```python
+```javascript
 if ($(selector).length)
 ```
 
@@ -3590,7 +3590,7 @@ What you want to do is bind the variable within each function to a separate, unc
 
 
 
-```python
+```javascript
 var funcs = [];
 
 function createfunc(i) {
@@ -3612,7 +3612,7 @@ Since there is no block scope in JavaScript - only function scope - by wrapping 
 
 Update: with the relatively widespread availability of the `Array.prototype.forEach` function (in 2015), it's worth noting that in those situations involving iteration primarily over an array of values, `.forEach()` provides a clean, natural way to get a distinct closure for every iteration. That is, assuming you've got some sort of array containing values (DOM references, objects, whatever), and the problem arises of setting up callbacks specific to each element, you can do this:
 
-```python
+```javascript
 var someArray = [ /* whatever */ ];
 // ...
 someArray.forEach(function(arrayElement) {
@@ -3629,7 +3629,7 @@ Update 2:
 ECMAScript 6 (ES6), the newest version of JavaScript, is now starting to be implemented in many evergreen browsers and backend systems. There are also transpilers like Babel that will convert ES6 to ES5 to allow usage of new features on older systems.
 ES6 introduces new `let` and `const` keywords that are scoped differently than `var`-based variables. For example, in a loop with a `let`-based index, each iteration through the loop will have a new value of ``i where each value is scoped inside the loop, so your code would work as you expect. There are many resources, but I'd recommend 2ality's block-scoping post as a great source of information.
 
-```python
+```javascript
 for (let i = 0; i < 3; i++) {
     funcs[i] = function() {
         console.log("My value: " + i);
@@ -3645,7 +3645,7 @@ Beware, though, that IE9-IE11 and Edge prior to Edge 14 support `let` but get th
 
 To get the value of the selected `radioName` item of a form with id `myForm`:
 
-```python
+```javascript
 $('input[name=radioName]:checked', '#myForm').val()
 ```
 
@@ -3653,13 +3653,13 @@ Here's an example:
 
 
 
-```python
+```javascript
 $('#myForm input').on('change', function() {
    alert($('input[name=radioName]:checked', '#myForm').val()); 
 });```
 
 
-```python
+```javascript
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <form id="myForm">
   <input type="radio" name="radioName" value="1" /> 1 <br />
@@ -3675,7 +3675,7 @@ $('#myForm input').on('change', function() {
 
 Modern browsers have added classList which provides methods to make it easier to manipulate classes without needing a library:
 
-```python
+```javascript
 document.getElementById("MyElement").classList.add('MyClass');
 
 document.getElementById("MyElement").classList.remove('MyClass');
@@ -3693,7 +3693,7 @@ The standard JavaScript way to select an element is using `document.getElementBy
 To change all classes for an element:
 To replace all existing classes with one or more new classes, set the className attribute:
 
-```python
+```javascript
 document.getElementById("MyElement").className = "MyClass";
 ```
 
@@ -3701,14 +3701,14 @@ document.getElementById("MyElement").className = "MyClass";
 To add an additional class to an element:
 To add a class to an element, without removing/affecting existing values, append a space and the new classname, like so:
 
-```python
+```javascript
 document.getElementById("MyElement").className += " MyClass";
 ```
 
 To remove a class from an element:
 To remove a single class to an element, without affecting other potential classes, a simple regex replace is required:
 
-```python
+```javascript
 document.getElementById("MyElement").className =
    document.getElementById("MyElement").className.replace
       ( /(?:^|\s)MyClass(?!\S)/g , '' )
@@ -3717,7 +3717,7 @@ document.getElementById("MyElement").className =
 
 An explanation of this regex is as follows:
 
-```python
+```javascript
 (?:^|\s) # Match the start of the string, or any single whitespace character
 
 MyClass  # The literal text for the classname to remove
@@ -3731,7 +3731,7 @@ The ``g flag tells the replace to repeat as required, in case the class name has
 To check if a class is already applied to an element:
 The same regex used above for removing a class can also be used as a check as to whether a particular class exists:
 
-```python
+```javascript
 if ( document.getElementById("MyElement").className.match(/(?:^|\s)MyClass(?!\S)/) )
 ```
 
@@ -3740,7 +3740,7 @@ Assigning these actions to onclick events:
 Whilst it is possible to write JavaScript directly inside the HTML event attributes (such as `onclick="this.className+=' MyClass'"`) this is not recommended behaviour. Especially on larger applications, more maintainable code is achieved by separating HTML markup from JavaScript interaction logic.
 The first step to achieving this is by creating a function, and calling the function in the onclick attribute, for example:
 
-```python
+```javascript
 <script type="text/javascript">
     function changeClass(){
         // Code examples from above
@@ -3753,7 +3753,7 @@ The first step to achieving this is by creating a function, and calling the func
 (It is not required to have this code in script tags, this is simply for brevity of example, and including the JavaScript in a distinct file may be more appropriate.)
 The second step is to move the onclick event out of the HTML and into JavaScript, for example using addEventListener
 
-```python
+```javascript
 <script type="text/javascript">
     function changeClass(){
         // Code examples from above
@@ -3779,7 +3779,7 @@ The examples above have been reproduced below using jQuery, probably the most co
 (Note that ``$ here is the jQuery object.)
 Changing Classes with jQuery:
 
-```python
+```javascript
 $('#MyElement').addClass('MyClass');
 
 $('#MyElement').removeClass('MyClass');
@@ -3789,20 +3789,20 @@ if ( $('#MyElement').hasClass('MyClass') )
 
 In addition, jQuery provides a shortcut for adding a class if it doesn't apply, or removing a class that does:
 
-```python
+```javascript
 $('#MyElement').toggleClass('MyClass');
 ```
 
 
 Assigning a function to a click event with jQuery:
 
-```python
+```javascript
 $('#MyElement').click(changeClass);
 ```
 
 or, without needing an id:
 
-```python
+```javascript
 $(':button:contains(My Button)').click(changeClass);
 ```
 
@@ -3812,7 +3812,7 @@ $(':button:contains(My Button)').click(changeClass);
 
 Coerces `oObject` to boolean. If it was falsey (e.g. 0, `null`, `undefined`, etc.), it will be `false`, otherwise, `true`.
 
-```python
+```javascript
 !oObject  //Inverted boolean
 !!oObject //Non inverted boolean so true boolean representation
 ```
@@ -3820,7 +3820,7 @@ Coerces `oObject` to boolean. If it was falsey (e.g. 0, `null`, `undefined`, etc
 So `!!` is not an operator, it's just the ``! operator twice.
 Real World Example "Test IE version":  
 
-```python
+```javascript
 let isIE8 = false;  
 isIE8 = !! navigator.userAgent.match(/MSIE 8.0/);  
 console.log(isIE8); // returns true or false 
@@ -3828,14 +3828,14 @@ console.log(isIE8); // returns true or false
 
 If you 
 
-```python
+```javascript
 console.log(navigator.userAgent.match(/MSIE 8.0/));  
 // returns null  
 ```
 
 but if you 
 
-```python
+```javascript
 console.log(!!navigator.userAgent.match(/MSIE 8.0/));  
 // returns true or false
 ```
@@ -3848,7 +3848,7 @@ If you take advantage of how `==` works, you could simply create an object with 
 
 
 
-```python
+```javascript
 const a = {
   i: 1,
   toString: function () {
@@ -3885,7 +3885,7 @@ Ways to clear an existing array ``A:
 Method 1
 (this was my original answer to the question)
 
-```python
+```javascript
 A = [];
 ```
 
@@ -3893,7 +3893,7 @@ This code will set the variable ``A to a new empty array. This is perfect if you
 This is also the fastest solution.
 This code sample shows the issue you can encounter when using this method:
 
-```python
+```javascript
 var arr1 = ['a','b','c','d','e','f'];
 var arr2 = arr1;  // Reference arr1 by another variable 
 arr1 = [];
@@ -3902,21 +3902,21 @@ console.log(arr2); // Output ['a','b','c','d','e','f']
 
 Method 2 (as suggested by Matthew Crumley)
 
-```python
+```javascript
 A.length = 0
 ```
 
 This will clear the existing array by setting its length to 0. Some have argued that this may not work in all implementations of JavaScript, but it turns out that this is not the case. It also works when using "strict mode" in ECMAScript 5 because the length property of an array is a read/write property.
 Method 3 (as suggested by Anthony)
 
-```python
+```javascript
 A.splice(0,A.length)
 ```
 
 Using `.splice()` will work perfectly, but since the `.splice()` function will return an array with all the removed items, it will actually return a copy of the original array. Benchmarks suggest that this has no effect on performance whatsoever.
 Method 4 (as suggested by tanguy_k)
 
-```python
+```javascript
 while(A.length > 0) {
     A.pop();
 }
@@ -3936,27 +3936,27 @@ This has been a hot topic and the cause of a lot of controversy. There are actua
 
 Checking for undefined-ness is not an accurate way of testing whether a key exists. What if the key exists but the value is actually `undefined`?
 
-```python
+```javascript
 var obj = { key: undefined };
 obj["key"] != undefined // false, but the key exists!
 ```
 
 You should instead use the `in` operator:
 
-```python
+```javascript
 "key" in obj // true, regardless of the actual value
 ```
 
 If you want to check if a key doesn't exist, remember to use parenthesis:
 
-```python
+```javascript
 !("key" in obj) // true if "key" doesn't exist in object
 !"key" in obj   // ERROR!  Equivalent to "false in obj"
 ```
 
 Or, if you want to particularly test for properties of the object instance (and not inherited properties), use `hasOwnProperty`:
 
-```python
+```javascript
 obj.hasOwnProperty("key") // true
 ```
 
@@ -3981,7 +3981,7 @@ http://fredkschott.com/post/2014/02/npm-no-longer-defaults-to-tildes/
 
 @Joel's answer is pretty close, but it will fail in the following cases:
 
-```python
+```javascript
 // Whitespace strings:
 IsNumeric(' ') == true;
 IsNumeric('\t\t') == true;
@@ -3997,7 +3997,7 @@ IsNumeric(8e5) == false;
 Some time ago I had to implement an `IsNumeric` function, to find out if a variable contained a numeric value, regardless of its type, it could be a `String` containing a numeric value (I had to consider also exponential notation, etc.), a `Number` object, virtually anything could be passed to that function, I couldn't make any type assumptions,  taking care of type coercion (eg. `+true == 1;` but `true` shouldn't be considered as `"numeric"`).
 I think is worth sharing this set of +30 unit tests (old link) made to numerous function implementations, and also share the one that passes all my tests:
 
-```python
+```javascript
 function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
@@ -4008,7 +4008,7 @@ P.S. isNaN & isFinite have a confusing behavior due to forced conversion to numb
 Update : 
 Here's how jQuery does it now (2.2-stable) : 
 
-```python
+```javascript
 isNumeric: function( obj ) {
     var realStringObj = obj && obj.toString();
     return !jQuery.isArray( obj ) && ( realStringObj - parseFloat( realStringObj ) + 1 ) >= 0;
@@ -4018,7 +4018,7 @@ isNumeric: function( obj ) {
 Update :
 Angular 4.3 :
 
-```python
+```javascript
 export function isNumeric(value: any): boolean {
   return !isNaN(value - parseFloat(value));
 }
@@ -4031,7 +4031,7 @@ export function isNumeric(value: any): boolean {
 Check out the built-in function `encodeURIComponent(str)` and `encodeURI(str)`.
 In your case, this should work:
 
-```python
+```javascript
 var myOtherUrl = 
        "http://example.com/index.html?url=" + encodeURIComponent(myUrl);
 ```
@@ -4042,7 +4042,7 @@ var myOtherUrl =
 
 If you just want to check whether there's any value, you can do 
 
-```python
+```javascript
 if (strValue) {
     //do something
 }
@@ -4056,14 +4056,14 @@ If you need to check specifically for an empty string over null, I would think c
 
 In modern browsers you can do
 
-```python
+```javascript
 Array.isArray(obj)
 ```
 
 (Supported by Chrome 5, Firefox 4.0, IE 9, Opera 10.5 and Safari 5)
 For backward compatibility you can add the following
 
-```python
+```javascript
 # only implement if no native implementation is available
 if (typeof Array.isArray === 'undefined') {
   Array.isArray = function(obj) {
@@ -4075,7 +4075,7 @@ if (typeof Array.isArray === 'undefined') {
 If you use jQuery you can use `jQuery.isArray(obj)` or `$.isArray(obj)`. If you use underscore you can use `_.isArray(obj)`
 If you don't need to detect arrays created in different frames you can also just use `instanceof`
 
-```python
+```javascript
 obj instanceof Array
 ```
 
@@ -4088,7 +4088,7 @@ Here is the snippet:
 
 
 
-```python
+```javascript
 var p = {
     "p1": "value1",
     "p2": "value2",

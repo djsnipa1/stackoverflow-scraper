@@ -3,9 +3,9 @@
 
 ## [What does the yield keyword do?](https://stackoverflow.com/questions/231767/what-does-the-yield-keyword-do)
 
-**8064 Votes**, Alex. S.
+**9996 Votes**, Alex. S.
 
-To understand what `yield` does, you must understand what generators are. And before generators come iterables.
+To understand what `yield` does, you must understand what generators are. And before you can understand generators, you must understand iterables.
 
 ### Iterables
 
@@ -71,10 +71,9 @@ It is just the same except you used `()` instead of `[]`. BUT, you cannot perfor
 
 Here it's a useless example, but it's handy when you know your function will return a huge set of values that you will only need to read once.
 To master `yield`, you must understand that when you call the function, the code you have written in the function body does not run. The function only returns the generator object, this is a bit tricky :-)
-Then, your code will be run each time the `for` uses the generator.
+Then, your code will continue from where it left off each time `for` uses the generator.
 Now the hard part:
-The first time the `for` calls the generator object created from your function, it will run the code in your function from the beginning until it hits `yield`, then it'll return the first value of the loop. Then, each other call will run the loop you have written in the function one more time, and return the next value, until there is no value to return.
-The generator is considered empty once the function runs, but does not hit `yield` anymore. It can be because the loop had come to an end, or because you do not satisfy an `"if/else"` anymore.
+The first time the `for` calls the generator object created from your function, it will run the code in your function from the beginning until it hits `yield`, then it'll return the first value of the loop. Then, each subsequent call will run another iteration of the loop you have written in the function and return the next value. This will continue until the generator is considered empty, which happens when the function runs without hitting `yield`. That can be because the loop has come to an end, or because you no longer satisfy an `"if/else"`.
 
 
 ### Your code explained
@@ -88,12 +87,12 @@ def _get_child_candidates(self, distance, min_dist, max_dist):
     # Here is the code that will be called each time you use the generator object:
 
     # If there is still a child of the node object on its left
-    # AND if distance is ok, return the next child
+    # AND if the distance is ok, return the next child
     if self._leftchild and distance - max_dist < self._median:
         yield self._leftchild
 
     # If there is still a child of the node object on its right
-    # AND if distance is ok, return the next child
+    # AND if the distance is ok, return the next child
     if self._rightchild and distance + max_dist >= self._median:
         yield self._rightchild
 
@@ -120,7 +119,7 @@ while candidates:
     if distance <= max_dist and distance >= min_dist:
         result.extend(node._values)
 
-    # Add the children of the candidate in the candidates list
+    # Add the children of the candidate in the candidate's list
     # so the loop will keep running until it will have looked
     # at all the children of the children of the children, etc. of the candidate
     candidates.extend(node._get_child_candidates(distance, min_dist, max_dist))
@@ -130,7 +129,7 @@ return result
 
 This code contains several smart parts:
 
-The loop iterates on a list, but the list expands while the loop is being iterated :-) It's a concise way to go through all these nested data even if it's a bit dangerous since you can end up with an infinite loop. In this case, `candidates.extend(node._get_child_candidates(distance, min_dist, max_dist))` exhausts all the values of the generator, but `while` keeps creating new generator objects which will produce different values from the previous ones since it's not applied on the same node.
+The loop iterates on a list, but the list expands while the loop is being iterated :-) It's a concise way to go through all these nested data even if it's a bit dangerous since you can end up with an infinite loop. In this case, `candidates.extend(node._get_child_candidates(distance, min_dist, max_dist))` exhaust all the values of the generator, but `while` keeps creating new generator objects which will produce different values from the previous ones since it's not applied on the same node.
 The `extend()` method is a list object method that expects an iterable and adds its values to the list.
 
 Usually we pass a list to it:
@@ -143,12 +142,12 @@ Usually we pass a list to it:
 [1, 2, 3, 4]
 ```
 
-But in your code it gets a generator, which is good because:
+But in your code, it gets a generator, which is good because:
 
 You don't need to read the values twice.
 You may have a lot of children and you don't want them all stored in memory.
 
-And it works because Python does not care if the argument of a method is a list or not. Python expects iterables so it will work with strings, lists, tuples and generators! This is called duck typing and is one of the reason why Python is so cool. But this is another story, for another question...
+And it works because Python does not care if the argument of a method is a list or not. Python expects iterables so it will work with strings, lists, tuples, and generators! This is called duck typing and is one of the reasons why Python is so cool. But this is another story, for another question...
 You can stop here, or read a little bit to see an advanced use of a generator:
 
 ### Controlling a generator exhaustion
@@ -241,16 +240,267 @@ Iteration is a process implying iterables (implementing the `__iter__()` method)
 Iterables are any objects you can get an iterator from. Iterators are objects that let you iterate on iterables.
 There is more about it in this article about how `for` loops work.
 
+## [Does Python have a ternary conditional operator?](https://stackoverflow.com/questions/394809/does-python-have-a-ternary-conditional-operator)
+
+**5901 Votes**, community-wiki
+
+Yes, it was added in version 2.5. The expression syntax is:
+
+```python
+a if condition else b
+```
+
+First `condition` is evaluated, then exactly one of either ``a or ``b is evaluated and returned based on the Boolean value of `condition`. If `condition` evaluates to `True`, then ``a is evaluated and returned but ``b is ignored, or else when ``b is evaluated and returned but ``a is ignored.
+This allows short-circuiting because when `condition` is true only ``a is evaluated and ``b is not evaluated at all, but when `condition` is false only ``b is evaluated and ``a is not evaluated at all.
+For example:
+
+```python
+>>> 'true' if True else 'false'
+'true'
+>>> 'true' if False else 'false'
+'false'
+```
+
+Note that conditionals are an expression, not a statement. This means you can't use assignment statements or `pass` or other statements within a conditional expression:
+
+```python
+>>> pass if False else x = 3
+  File "<stdin>", line 1
+    pass if False else x = 3
+          ^
+SyntaxError: invalid syntax
+```
+
+You can, however, use conditional expressions to assign a variable like so:
+
+```python
+x = a if True else b
+```
+
+Think of the conditional expression as switching between two values. It is very useful when you're in a 'one value or another' situation, it but doesn't do much else.
+If you need to use statements, you have to use a normal `if` statement instead of a conditional expression.
+
+Keep in mind that it's frowned upon by some Pythonistas for several reasons:
+
+The order of the arguments is different from those of the classic `condition ? a : b` ternary operator from many other languages (such as C, C++, Go, Perl, Ruby, Java, Javascript, etc.), which may lead to bugs when people unfamiliar with Python's "surprising" behaviour use it (they may reverse the argument order).
+Some find it "unwieldy", since it goes contrary to the normal flow of thought (thinking of the condition first and then the effects).
+Stylistic reasons. (Although the 'inline `if`' can be really useful, and make your script more concise, it really does complicate your code)
+
+If you're having trouble remembering the order, then remember that when read aloud, you (almost) say what you mean. For example, `x = 4 if b > 8 else 9` is read aloud as `x will be 4 if b is greater than 8 otherwise 9`.
+Official documentation:     
+
+Conditional expressions
+Is there an equivalent of Cs ?: ternary operator?
+
+## [What does if __name__ == __main__: do?](https://stackoverflow.com/questions/419163/what-does-if-name-main-do)
+
+**5891 Votes**, Devoted
+
+Whenever the Python interpreter reads a source file, it does two things:
+
+it sets a few special variables like `__name__`, and then
+it executes all of the code found in the file.
+
+Let's see how this works and how it relates to your question about the `__name__` checks we always see in Python scripts.
+Code Sample
+Let's use a slightly different code sample to explore how imports and scripts work.  Suppose the following is in a file called `foo.py`.
+
+```python
+# Suppose this is foo.py.
+
+print("before import")
+import math
+
+print("before functionA")
+def functionA():
+    print("Function A")
+
+print("before functionB")
+def functionB():
+    print("Function B {}".format(math.sqrt(100)))
+
+print("before __name__ guard")
+if __name__ == '__main__':
+    functionA()
+    functionB()
+print("after __name__ guard")
+```
+
+Special Variables
+When the Python interpeter reads a source file, it first defines a few special variables. In this case, we care about the `__name__` variable.
+When Your Module Is the Main Program
+If you are running your module (the source file) as the main program, e.g.
+
+```python
+python foo.py
+```
+
+the interpreter will assign the hard-coded string `"__main__"` to the `__name__` variable, i.e.
+
+```python
+# It's as if the interpreter inserts this at the top
+# of your module when run as the main program.
+__name__ = "__main__" 
+```
+
+When Your Module Is Imported By Another
+On the other hand, suppose some other module is the main program and it imports your module. This means there's a statement like this in the main program, or in some other module the main program imports:
+
+```python
+# Suppose this is in some other main program.
+import foo
+```
+
+The interpreter will search for your `foo.py` file (along with searching for a few other variants), and prior to executing that module, it will assign the name `"foo"` from the import statement to the `__name__` variable, i.e.
+
+```python
+# It's as if the interpreter inserts this at the top
+# of your module when it's imported from another module.
+__name__ = "foo"
+```
+
+Executing the Module's Code
+After the special variables are set up, the interpreter executes all the code in the module, one statement at a time. You may want to open another window on the side with the code sample so you can follow along with this explanation.
+Always
+
+It prints the string `"before import"` (without quotes).
+It loads the `math` module and assigns it to a variable called `math`. This is equivalent to replacing `import math` with the following (note that `__import__` is a low-level function in Python that takes a string and triggers the actual import):
+
+
+```python
+# Find and load a module given its string name, "math",
+# then assign it to a local variable called math.
+math = __import__("math")
+```
+
+
+It prints the string `"before functionA"`.
+It executes the `def` block, creating a function object, then assigning that function object to a variable called `functionA`.
+It prints the string `"before functionB"`.
+It executes the second `def` block, creating another function object, then assigning it to a variable called `functionB`.
+It prints the string `"before __name__ guard"`.
+
+Only When Your Module Is the Main Program
+
+If your module is the main program, then it will see that `__name__` was indeed set to `"__main__"` and it calls the two functions, printing the strings `"Function A"` and `"Function B 10.0"`.
+
+Only When Your Module Is Imported by Another
+
+(instead) If your module is not the main program but was imported by another one, then `__name__` will be `"foo"`, not `"__main__"`, and it'll skip the body of the `if` statement.
+
+Always
+
+It will print the string `"after __name__ guard"` in both situations.
+
+Summary
+In summary, here's what'd be printed in the two cases:
+
+```python
+# What gets printed if foo is the main program
+before import
+before functionA
+before functionB
+before __name__ guard
+Function A
+Function B 10.0
+after __name__ guard
+```
+
+
+```python
+# What gets printed if foo is imported as a regular module
+before import
+before functionA
+before functionB
+before __name__ guard
+after __name__ guard
+```
+
+Why Does It Work This Way?
+You might naturally wonder why anybody would want this.  Well, sometimes you want to write a `.py` file that can be both used by other programs and/or modules as a module, and can also be run as the main program itself.  Examples:
+
+Your module is a library, but you want to have a script mode where it runs some unit tests or a demo.
+Your module is only used as a main program, but it has some unit tests, and the testing framework works by importing `.py` files like your script and running special test functions. You don't want it to try running the script just because it's importing the module.
+Your module is mostly used as a main program, but it also provides a programmer-friendly API for advanced users.
+
+Beyond those examples, it's elegant that running a script in Python is just setting up a few magic variables and importing the script. "Running" the script is a side effect of importing the script's module.
+Food for Thought
+
+Question: Can I have multiple `__name__` checking blocks?  Answer: it's strange to do so, but the language won't stop you.
+Suppose the following is in `foo2.py`.  What happens if you say `python foo2.py` on the command-line? Why?
+
+
+```python
+# Suppose this is foo2.py.
+
+def functionA():
+    print("a1")
+    from foo2 import functionB
+    print("a2")
+    functionB()
+    print("a3")
+
+def functionB():
+    print("b")
+
+print("t1")
+if __name__ == "__main__":
+    print("m1")
+    functionA()
+    print("m2")
+print("t2")
+```
+
+
+Now, figure out what will happen if you remove the `__name__` check in `foo3.py`:
+
+
+```python
+# Suppose this is foo3.py.
+
+def functionA():
+    print("a1")
+    from foo3 import functionB
+    print("a2")
+    functionB()
+    print("a3")
+
+def functionB():
+    print("b")
+
+print("t1")
+print("m1")
+functionA()
+print("m2")
+print("t2")
+```
+
+
+What will this do when used as a script?  When imported as a module?
+
+
+```python
+# Suppose this is in foo4.py
+__name__ = "__main__"
+
+def bar():
+    print("bar")
+
+print("before __name__ guard")
+if __name__ == "__main__":
+    bar()
+print("after __name__ guard")
+```
+
 ## [What are metaclasses in Python?](https://stackoverflow.com/questions/100003/what-are-metaclasses-in-python)
 
-**4439 Votes**, e-satis
+**5620 Votes**, e-satis
 
-A metaclass is the class of a class. Like a class defines how an instance of the class behaves, a metaclass defines how a class behaves. A class is an instance of a metaclass.
-
-While in Python you can use arbitrary callables for metaclasses (like Jerub shows), the more useful approach is actually to make it an actual class itself. `type` is the usual metaclass in Python. In case you're wondering, yes, `type` is itself a class, and it is its own type. You won't be able to recreate something like `type` purely in Python, but Python cheats a little. To create your own metaclass in Python you really just want to subclass `type`.
-A metaclass is most commonly used as a class-factory. Like you create an instance of the class by calling the class, Python creates a new class (when it executes the 'class' statement) by calling the metaclass. Combined with the normal `__init__` and `__new__` methods, metaclasses therefore allow you to do 'extra things' when creating a class, like registering the new class with some registry, or even replace the class with something else entirely.
+A metaclass is the class of a class. A class defines how an instance of the class (i.e. an object) behaves while a metaclass defines how a class behaves. A class is an instance of a metaclass.
+While in Python you can use arbitrary callables for metaclasses (like Jerub shows), the better approach is to make it an actual class itself. `type` is the usual metaclass in Python. `type` is itself a class, and it is its own type. You won't be able to recreate something like `type` purely in Python, but Python cheats a little. To create your own metaclass in Python you really just want to subclass `type`.
+A metaclass is most commonly used as a class-factory. When you create an object by calling the class, Python creates a new class (when it executes the 'class' statement) by calling the metaclass. Combined with the normal `__init__` and `__new__` methods, metaclasses therefore allow you to do 'extra things' when creating a class, like registering the new class with some registry or replace the class with something else entirely.
 When the `class` statement is executed, Python first executes the body of the `class` statement as a normal block of code. The resulting namespace (a dict) holds the attributes of the class-to-be. The metaclass is determined by looking at the baseclasses of the class-to-be (metaclasses are inherited), at the `__metaclass__` attribute of the class-to-be (if any) or the `__metaclass__` global variable. The metaclass is then called with the name, bases and attributes of the class to instantiate it.
-However, metaclasses actually define the type of a class, not just a factory for it, so you can do much more with them. You can, for instance, define normal methods on the metaclass. These metaclass-methods are like classmethods, in that they can be called on the class without an instance, but they are also not like classmethods in that they cannot be called on an instance of the class. `type.__subclasses__()` is an example of a method on the `type` metaclass. You can also define the normal 'magic' methods, like `__add__`, `__iter__` and `__getattr__`, to implement or change how the class behaves.
+However, metaclasses actually define the type of a class, not just a factory for it, so you can do much more with them. You can, for instance, define normal methods on the metaclass. These metaclass-methods are like classmethods in that they can be called on the class without an instance, but they are also not like classmethods in that they cannot be called on an instance of the class. `type.__subclasses__()` is an example of a method on the `type` metaclass. You can also define the normal 'magic' methods, like `__add__`, `__iter__` and `__getattr__`, to implement or change how the class behaves.
 Here's an aggregated example of the bits and pieces:
 
 ```python
@@ -327,55 +577,9 @@ print ExampleSibling
 print ExampleSibling.__mro__
 ```
 
-## [Does Python have a ternary conditional operator?](https://stackoverflow.com/questions/394809/does-python-have-a-ternary-conditional-operator)
+## [How do I check whether a file exists without exceptions?](https://stackoverflow.com/questions/82831/how-do-i-check-whether-a-file-exists-without-exceptions)
 
-**4241 Votes**, community-wiki
-
-Yes, it was added in version 2.5.
-The syntax is:
-
-```python
-a if condition else b
-```
-
-First `condition` is evaluated, then either ``a or ``b is returned based on the Boolean value of `condition`
-If `condition` evaluates to True ``a is returned, else ``b is returned. 
-For example:
-
-```python
->>> 'true' if True else 'false'
-'true'
->>> 'true' if False else 'false'
-'false'
-```
-
-Note that conditionals are an expression, not a statement. This means you can't use assignments or `pass` or other statements in a conditional:
-
-```python
->>> pass if False else x = 3
-  File "<stdin>", line 1
-    pass if False else x = 3
-          ^
-SyntaxError: invalid syntax
-```
-
-In such a case, you have to use a normal `if` statement instead of a conditional.
-
-Keep in mind that it's frowned upon by some Pythonistas for several reasons:
-
-The order of the arguments is different from many other languages (such as C, Ruby, Java, etc.), which may lead to bugs when people unfamiliar with Python's "surprising" behaviour use it (they may reverse the order).
-Some find it "unwieldy", since it goes contrary to the normal flow of thought (thinking of the condition first and then the effects).
-Stylistic reasons.
-
-If you're having trouble remembering the order, then remember that if you read it out loud, you (almost) say what you mean. For example, `x = 4 if b > 8 else 9` is read aloud as `x will be 4 if b is greater than 8 otherwise 9`.
-Official documentation:
-
-Conditional expressions
-Is there an equivalent of Cs ?: ternary operator?
-
-## [How to check whether a file exists?](https://stackoverflow.com/questions/82831/how-to-check-whether-a-file-exists)
-
-**4190 Votes**, spence91
+**5482 Votes**, spence91
 
 If the reason you're checking is so you can do something like `if file_exists: open_it()`, it's safer to use a `try` around the attempt to open it. Checking and then opening risks the file being deleted or moved or something between when you check and when you try to open it.
 If you're not planning to open the file immediately, you can use `os.path.isfile`
@@ -413,64 +617,51 @@ if my_file.exists():
     # path exists
 ```
 
-You can also use `resolve()` in a `try` block:
+You can also use `resolve(strict=True)` in a `try` block:
 
 ```python
 try:
-    my_abs_path = my_file.resolve():
+    my_abs_path = my_file.resolve(strict=True)
 except FileNotFoundError:
     # doesn't exist
 else:
     # exists
 ```
 
-## [What does if __name__ == __main__: do?](https://stackoverflow.com/questions/419163/what-does-if-name-main-do)
+## [Calling an external command from Python](https://stackoverflow.com/questions/89228/calling-an-external-command-from-python)
 
-**3891 Votes**, Devoted
-
-When the Python interpreter reads a source file, it executes all of the code found in it.
-Before executing the code, it will define a few special variables. For example, if the Python interpreter is running that module (the source file) as the main program, it sets the special `__name__` variable to have a value `"__main__"`.  If this file is being imported from another module, `__name__` will be set to the module's name.
-In the case of your script, let's assume that it's executing as the main function, e.g. you said something like
-
-```python
-python threading_example.py
-```
-
-on the command line. After setting up the special variables, it will execute the `import` statement and load those modules. It will then evaluate the `def` block, creating a function object and creating a variable called `myfunction` that points to the function object. It will then read the `if` statement and see that `__name__` does equal `"__main__"`, so it will execute the block shown there.
-One reason for doing this is that sometimes you write a module (a `.py` file) where it can be executed directly. Alternatively, it can also be imported and used in another module. By doing the main check, you can have that code only execute when you want to run the module as a program and not have it execute when someone just wants to import your module and call your functions themselves.
-See this page for some extra details.
-
-## [Calling an external command in Python](https://stackoverflow.com/questions/89228/calling-an-external-command-in-python)
-
-**3497 Votes**, freshWoWer
+**4791 Votes**, freshWoWer
 
 Look at the subprocess module in the standard library:
 
 ```python
-from subprocess import call
-call(["ls", "-l"])
+import subprocess
+subprocess.run(["ls", "-l"])
 ```
 
-The advantage of subprocess vs system is that it is more flexible (you can get the stdout, stderr, the "real" status code, better error handling, etc...). 
-The official docs recommend the subprocess module over the alternative os.system():
+The advantage of `subprocess` vs. `system` is that it is more flexible (you can get the `stdout`, `stderr`, the "real" status code, better error handling, etc...).
+The official documentation recommends the `subprocess` module over the alternative `os.system()`:
 
-The subprocess module provides more powerful facilities for spawning new processes and retrieving their results; using that module is preferable to using this function [`os.system()`].
+The `subprocess` module provides more powerful facilities for spawning new processes and retrieving their results; using that module is preferable to using this function [`os.system()`].
 
-The "Replacing Older Functions with the subprocess Module" section in the subprocess documentation may have some helpful recipes.
-Official documentation on the subprocess module:
+The Replacing Older Functions with the subprocess Module section in the `subprocess` documentation may have some helpful recipes.
+For versions of Python before 3.5, use `call`:
 
-Python 2 - subprocess
-Python 3 - subprocess
+```python
+import subprocess
+subprocess.call(["ls", "-l"])
+```
 
-## [How to merge two dictionaries in a single expression?](https://stackoverflow.com/questions/38987/how-to-merge-two-dictionaries-in-a-single-expression)
+## [How do I merge two dictionaries in a single expression?](https://stackoverflow.com/questions/38987/how-do-i-merge-two-dictionaries-in-a-single-expression)
 
-**3064 Votes**, Carl Meyer
+**4642 Votes**, Carl Meyer
 
-How can I merge two Python dictionaries in a single expression?
+### How can I merge two Python dictionaries in a single expression?
 
-For dictionaries ``x and ``y, ``z becomes a merged dictionary with values from ``y replacing those from ``x.
 
-In Python 3.5 or greater, :
+For dictionaries ``x and ``y, ``z becomes a shallowly merged dictionary with values from ``y replacing those from ``x.
+
+In Python 3.5 or greater:
 
 ```python
 z = {**x, **y}
@@ -485,16 +676,20 @@ def merge_two_dicts(x, y):
     return z
 ```
 
-and
+and now:
 
 ```python
 z = merge_two_dicts(x, y)
 ```
 
+In Python 3.9.0a4 or greater (final release date approx October 2020): PEP-584, discussed here, was implemented to further simplify this:
+
+```python
+z = x | y          # NOTE: 3.9+ ONLY
+```
 
 
-### Explanation
-
+Explanation
 Say you have two dicts and you want to merge them into a new dict without altering the original dicts:
 
 ```python
@@ -515,7 +710,21 @@ A new syntax for this, proposed in PEP 448 and available as of Python 3.5, is
 z = {**x, **y}
 ```
 
-And it is indeed a single expression. It is now showing as implemented in the release schedule for 3.5, PEP 478, and it has now made its way into What's New in Python 3.5 document.
+And it is indeed a single expression. 
+Note that we can merge in with literal notation as well:
+
+```python
+z = {**x, 'foo': 1, 'bar': 2, **y}
+```
+
+and now: 
+
+```python
+>>> z
+{'a': 1, 'b': 3, 'foo': 1, 'bar': 2, 'c': 4}
+```
+
+It is now showing as implemented in the release schedule for 3.5, PEP 478, and it has now made its way into What's New in Python 3.5 document.
 However, since many organizations are still on Python 2, you may wish to do this in a backwards compatible way. The classically Pythonic way, available in Python 2 and Python 3.0-3.4, is to do this as a two-step process:
 
 ```python
@@ -524,7 +733,9 @@ z.update(y) # which returns None since it mutates z
 ```
 
 In both approaches, ``y will come second and its values will replace ``x's values, thus `'b'` will point to ``3 in our final result.
-Not yet on Python 3.5, but want a single expression
+
+### Not yet on Python 3.5, but want a single expression
+
 If you are not yet on Python 3.5, or need to write backward-compatible code, and you want this in a single expression, the most performant while correct approach is to put it in a function:
 
 ```python
@@ -562,7 +773,9 @@ z = merge_dicts(a, b, c, d, e, f, g)
 ```
 
 and key value pairs in ``g will take precedence over dicts ``a to ``f, and so on.
-Critiques of Other Answers
+
+### Critiques of Other Answers
+
 Don't use what you see in the formerly accepted answer:
 
 ```python
@@ -665,12 +878,45 @@ TypeError: foo() keywords must be strings
 
 This inconsistency was bad given other implementations of Python (Pypy, Jython, IronPython). Thus it was fixed in Python 3, as this usage could be a breaking change.
 I submit to you that it is malicious incompetence to intentionally write code that only works in one version of a language or that only works given certain arbitrary constraints.
-Another comment:
+More comments:
 
 `dict(x.items() + y.items())` is still the most readable solution for Python 2. Readability counts. 
 
 My response: `merge_two_dicts(x, y)` actually seems much clearer to me, if we're actually concerned about readability. And it is not forward compatible, as Python 2 is increasingly deprecated.
-Less Performant But Correct Ad-hocs
+
+`{**x, **y}` does not seem to handle nested dictionaries. the contents of nested keys are simply overwritten, not merged [...] I ended up being burnt by these answers that do not merge recursively and I was surprised no one mentioned it. In my interpretation of the word "merging" these answers describe "updating one dict with another", and not merging.
+
+Yes. I must refer you back to the question, which is asking for a shallow merge of two dictionaries, with the first's values being overwritten by the second's - in a single expression.
+Assuming two dictionary of dictionaries, one might recursively merge them in a single function, but you should be careful not to modify the dicts from either source, and the surest way to avoid that is to make a copy when assigning values. As keys must be hashable and are usually therefore immutable, it is pointless to copy them:
+
+```python
+from copy import deepcopy
+
+def dict_of_dicts_merge(x, y):
+    z = {}
+    overlapping_keys = x.keys() & y.keys()
+    for key in overlapping_keys:
+        z[key] = dict_of_dicts_merge(x[key], y[key])
+    for key in x.keys() - overlapping_keys:
+        z[key] = deepcopy(x[key])
+    for key in y.keys() - overlapping_keys:
+        z[key] = deepcopy(y[key])
+    return z
+```
+
+Usage:
+
+```python
+>>> x = {'a':{1:{}}, 'b': {2:{}}}
+>>> y = {'b':{10:{}}, 'c': {11:{}}}
+>>> dict_of_dicts_merge(x, y)
+{'b': {2: {}, 10: {}}, 'a': {1: {}}, 'c': {11: {}}}
+```
+
+Coming up with contingencies for other value types is far beyond the scope of this question, so I will point you at my answer to the canonical question on a "Dictionaries of dictionaries merge".
+
+### Less Performant But Correct Ad-hocs
+
 These approaches are less performant, but they will provide correct behavior.
 They will be much less performant than `copy` and `update` or the new unpacking because they iterate through each key-value pair at a higher level of abstraction, but they do respect the order of precedence (latter dicts have precedence)
 You can also chain the dicts manually inside a dict comprehension:
@@ -692,7 +938,9 @@ import itertools
 z = dict(itertools.chain(x.iteritems(), y.iteritems()))
 ```
 
-Performance Analysis
+
+### Performance Analysis
+
 I'm only going to do the performance analysis of the usages known to behave correctly. 
 
 ```python
@@ -739,11 +987,18 @@ The official Python docs on dictionaries
 The Dictionary Even Mightier - talk by Brandon Rhodes at Pycon 2017
 Modern Python Dictionaries, A Confluence of Great Ideas - talk by Raymond Hettinger at Pycon 2017
 
-## [How can I create a directory if it does not exist?](https://stackoverflow.com/questions/273192/how-can-i-create-a-directory-if-it-does-not-exist)
+## [How can I safely create a nested directory?](https://stackoverflow.com/questions/273192/how-can-i-safely-create-a-nested-directory)
 
-**2841 Votes**, Parand
+**4139 Votes**, Parand
 
-I see two answers with good qualities, each with a small flaw, so I will give my take on it:
+On Python  3.5, use `pathlib.Path.mkdir`:
+
+```python
+from pathlib import Path
+Path("/my/directory").mkdir(parents=True, exist_ok=True)
+```
+
+For older versions of Python, I see two answers with good qualities, each with a small flaw, so I will give my take on it:
 Try `os.path.exists`, and consider `os.makedirs` for the creation.
 
 ```python
@@ -752,7 +1007,7 @@ if not os.path.exists(directory):
     os.makedirs(directory)
 ```
 
-As noted in comments and elsewhere, there's a race condition - if the directory is created between the `os.path.exists` and the `os.makedirs` calls, the `os.makedirs` will fail with an `OSError`. Unfortunately, blanket-catching `OSError` and continuing is not foolproof, as it will ignore a failure to create the directory due to other factors, such as insufficient permissions, full disk, etc.
+As noted in comments and elsewhere, there's a race condition  if the directory is created between the `os.path.exists` and the `os.makedirs` calls, the `os.makedirs` will fail with an `OSError`. Unfortunately, blanket-catching `OSError` and continuing is not foolproof, as it will ignore a failure to create the directory due to other factors, such as insufficient permissions, full disk, etc.
 One option would be to trap the `OSError` and examine the embedded error code (see Is there a cross-platform way of getting information from Pythons OSError):
 
 ```python
@@ -765,34 +1020,27 @@ except OSError as e:
         raise
 ```
 
-Alternatively, there could be a second `os.path.exists`, but suppose another created the directory after the first check, then removed it before the second one - we could still be fooled. 
+Alternatively, there could be a second `os.path.exists`, but suppose another created the directory after the first check, then removed it before the second one  we could still be fooled. 
 Depending on the application, the danger of concurrent operations may be more or less than the danger posed by other factors such as file permissions. The developer would have to know more about the particular application being developed and its expected environment before choosing an implementation.
-
-## [How do I sort a dictionary by value?](https://stackoverflow.com/questions/613183/how-do-i-sort-a-dictionary-by-value)
-
-**2804 Votes**, Gern Blanston
-
-It is not possible to sort a dictionary, only to get a representation of a dictionary that is sorted. Dictionaries are inherently orderless, but other types, such as lists and tuples, are not. So you need an ordered data type to represent sorted values, which will be a listprobably a list of tuples.
-For instance,
+Modern versions of Python improve this code quite a bit, both by exposing `FileExistsError` (in 3.3+)...
 
 ```python
-import operator
-x = {1: 2, 3: 4, 4: 3, 2: 1, 0: 0}
-sorted_x = sorted(x.items(), key=operator.itemgetter(1))
+try:
+    os.makedirs("path/to/directory")
+except FileExistsError:
+    # directory already exists
+    pass
 ```
 
-`sorted_x` will be a list of tuples sorted by the second element in each tuple. `dict(sorted_x) == x`.
-And for those wishing to sort on keys instead of values:
+...and by allowing a keyword argument to `os.makedirs` called `exist_ok` (in 3.2+).
 
 ```python
-import operator
-x = {1: 2, 3: 4, 4: 3, 2: 1, 0: 0}
-sorted_x = sorted(x.items(), key=operator.itemgetter(0))
+os.makedirs("path/to/directory", exist_ok=True)  # succeeds even if directory exists.
 ```
 
 ## [Does Python have a string 'contains' substring method?](https://stackoverflow.com/questions/3437059/does-python-have-a-string-contains-substring-method)
 
-**2717 Votes**, Blankman
+**3599 Votes**, Blankman
 
 You can use the `in` operator:
 
@@ -801,97 +1049,40 @@ if "blah" not in somestring:
     continue
 ```
 
-## [How do I list all files of a directory?](https://stackoverflow.com/questions/3207219/how-do-i-list-all-files-of-a-directory)
+## [Accessing the index in 'for' loops?](https://stackoverflow.com/questions/522563/accessing-the-index-in-for-loops)
 
-**2654 Votes**, duhhunjonn
+**3509 Votes**, Joan Venge
 
-`os.listdir()` will get you everything that's in a directory - files and directories.
-If you want just files, you could either filter this down using `os.path`:
-
-```python
-from os import listdir
-from os.path import isfile, join
-onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-```
-
-or you could use `os.walk()` which will yield two lists for each directory it visits - splitting into files and dirs for you. If you only want the top directory you can just break the first time it yields
+Using an additional state variable, such as an index variable (which you would normally use in languages such as C or PHP), is considered non-pythonic.
+The better option is to use the built-in function `enumerate()`, available in both Python 2 and 3:
 
 ```python
-from os import walk
-
-f = []
-for (dirpath, dirnames, filenames) in walk(mypath):
-    f.extend(filenames)
-    break
+for idx, val in enumerate(ints):
+    print(idx, val)
 ```
 
-And lastly, as that example shows, adding one list to another you can either use `.extend()` or 
+Check out PEP 279 for more.
 
-```python
->>> q = [1, 2, 3]
->>> w = [4, 5, 6]
->>> q = q + w
->>> q
-[1, 2, 3, 4, 5, 6]
-```
+## [Difference between staticmethod and classmethod](https://stackoverflow.com/questions/136097/difference-between-staticmethod-and-classmethod)
 
-Personally, I prefer `.extend()`
-
-## [How do I check if a list is empty?](https://stackoverflow.com/questions/53513/how-do-i-check-if-a-list-is-empty)
-
-**2603 Votes**, Ray Vega
-
-```python
-if not a:
-  print("List is empty")
-```
-
-Using the implicit booleanness of the empty list is quite pythonic.
-
-## [Difference between append vs. extend list methods in Python](https://stackoverflow.com/questions/252703/difference-between-append-vs-extend-list-methods-in-python)
-
-**2586 Votes**, Claudiu
-
-`append`: Appends object at end.
-
-```python
-x = [1, 2, 3]
-x.append([4, 5])
-print (x)
-```
-
-gives you: `[1, 2, 3, [4, 5]]`
-
-`extend`: Extends list by appending elements from the iterable.
-
-```python
-x = [1, 2, 3]
-x.extend([4, 5])
-print (x)
-```
-
-gives you: `[1, 2, 3, 4, 5]`
-
-## [What is the difference between @staticmethod and @classmethod in Python?](https://stackoverflow.com/questions/136097/what-is-the-difference-between-staticmethod-and-classmethod-in-python)
-
-**2547 Votes**, Daryl Spitzer
+**3506 Votes**, Daryl Spitzer
 
 Maybe a bit of example code will help: Notice the difference in the call signatures of `foo`, `class_foo` and `static_foo`:
 
 ```python
 class A(object):
-    def foo(self,x):
-        print "executing foo(%s,%s)"%(self,x)
+    def foo(self, x):
+        print "executing foo(%s, %s)" % (self, x)
 
     @classmethod
-    def class_foo(cls,x):
-        print "executing class_foo(%s,%s)"%(cls,x)
+    def class_foo(cls, x):
+        print "executing class_foo(%s, %s)" % (cls, x)
 
     @staticmethod
     def static_foo(x):
-        print "executing static_foo(%s)"%x    
+        print "executing static_foo(%s)" % x    
 
-a=A()
+a = A()
 ```
 
 Below is the usual way an object instance calls a method. The object instance, ``a, is implicitly passed as the first argument.
@@ -963,23 +1154,274 @@ print(A.static_foo)
 # <function static_foo at 0xb7d479cc>
 ```
 
-## [Accessing the index in 'for' loops?](https://stackoverflow.com/questions/522563/accessing-the-index-in-for-loops)
+## [How do I list all files of a directory?](https://stackoverflow.com/questions/3207219/how-do-i-list-all-files-of-a-directory)
 
-**2438 Votes**, Joan Venge
+**3473 Votes**, duhhunjonn
 
-Using an additional state variable, such as an index variable (which you would normally use in languages such as C or PHP), is considered non-pythonic.
-The better option is to use the built-in function `enumerate()`, available in both Python 2 and 3:
+`os.listdir()` will get you everything that's in a directory - files and directories.
+If you want just files, you could either filter this down using `os.path`:
 
 ```python
-for idx, val in enumerate(ints):
-    print(idx, val)
+from os import listdir
+from os.path import isfile, join
+onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 ```
 
-Check out PEP 279 for more.
+or you could use `os.walk()` which will yield two lists for each directory it visits - splitting into files and dirs for you. If you only want the top directory you can just break the first time it yields
+
+```python
+from os import walk
+
+f = []
+for (dirpath, dirnames, filenames) in walk(mypath):
+    f.extend(filenames)
+    break
+```
+
+## [How do I sort a dictionary by value?](https://stackoverflow.com/questions/613183/how-do-i-sort-a-dictionary-by-value)
+
+**3422 Votes**, Gern Blanston
+
+Python 3.6+
+
+```python
+x = {1: 2, 3: 4, 4: 3, 2: 1, 0: 0}
+{k: v for k, v in sorted(x.items(), key=lambda item: item[1])}
+{0: 0, 2: 1, 1: 2, 4: 3, 3: 4}
+```
+
+Older Python
+It is not possible to sort a dictionary, only to get a representation of a dictionary that is sorted. Dictionaries are inherently orderless, but other types, such as lists and tuples, are not. So you need an ordered data type to represent sorted values, which will be a listprobably a list of tuples.
+For instance,
+
+```python
+import operator
+x = {1: 2, 3: 4, 4: 3, 2: 1, 0: 0}
+sorted_x = sorted(x.items(), key=operator.itemgetter(1))
+```
+
+`sorted_x` will be a list of tuples sorted by the second element in each tuple. `dict(sorted_x) == x`.
+And for those wishing to sort on keys instead of values:
+
+```python
+import operator
+x = {1: 2, 3: 4, 4: 3, 2: 1, 0: 0}
+sorted_x = sorted(x.items(), key=operator.itemgetter(0))
+```
+
+In Python3 since unpacking is not allowed [1] we can use 
+
+```python
+x = {1: 2, 3: 4, 4: 3, 2: 1, 0: 0}
+sorted_x = sorted(x.items(), key=lambda kv: kv[1])
+```
+
+If you want the output as a dict, you can use `collections.OrderedDict`:
+
+```python
+import collections
+
+sorted_dict = collections.OrderedDict(sorted_x)
+```
+
+## [How to make a flat list out of list of lists?](https://stackoverflow.com/questions/952914/how-to-make-a-flat-list-out-of-list-of-lists)
+
+**3247 Votes**, Emma
+
+Given a list of lists ``l,
+`flat_list = [item for sublist in l for item in sublist]`
+which means:
+
+```python
+flat_list = []
+for sublist in l:
+    for item in sublist:
+        flat_list.append(item)
+```
+
+is faster than the shortcuts posted so far. (``l is the list to flatten.)
+Here is the corresponding function:
+
+```python
+flatten = lambda l: [item for sublist in l for item in sublist]
+```
+
+As evidence, you can use the `timeit` module in the standard library:
+
+```python
+$ python -mtimeit -s'l=[[1,2,3],[4,5,6], [7], [8,9]]*99' '[item for sublist in l for item in sublist]'
+10000 loops, best of 3: 143 usec per loop
+$ python -mtimeit -s'l=[[1,2,3],[4,5,6], [7], [8,9]]*99' 'sum(l, [])'
+1000 loops, best of 3: 969 usec per loop
+$ python -mtimeit -s'l=[[1,2,3],[4,5,6], [7], [8,9]]*99' 'reduce(lambda x,y: x+y,l)'
+1000 loops, best of 3: 1.1 msec per loop
+```
+
+Explanation: the shortcuts based on ``+ (including the implied use in `sum`) are, of necessity, `O(L**2)` when there are L sublists -- as the intermediate result list keeps getting longer, at each step a new intermediate result list object gets allocated, and all the items in the previous intermediate result must be copied over (as well as a few new ones added at the end). So, for simplicity and without actual loss of generality, say you have L sublists of I items each: the first I items are copied back and forth L-1 times, the second I items L-2 times, and so on; total number of copies is I times the sum of x for x from 1 to L excluded, i.e., `I * (L**2)/2`.
+The list comprehension just generates one list, once, and copies each item over (from its original place of residence to the result list) also exactly once.
+
+## [How do I check if a list is empty?](https://stackoverflow.com/questions/53513/how-do-i-check-if-a-list-is-empty)
+
+**3234 Votes**, Ray
+
+```python
+if not a:
+  print("List is empty")
+```
+
+Using the implicit booleanness of the empty `list` is quite pythonic.
+
+## [Understanding slice notation](https://stackoverflow.com/questions/509211/understanding-slice-notation)
+
+**3199 Votes**, Simon
+
+It's pretty simple really:
+
+```python
+a[start:stop]  # items start through stop-1
+a[start:]      # items start through the rest of the array
+a[:stop]       # items from the beginning through stop-1
+a[:]           # a copy of the whole array
+```
+
+There is also the `step` value, which can be used with any of the above:
+
+```python
+a[start:stop:step] # start through not past stop, by step
+```
+
+The key point to remember is that the `:stop` value represents the first value that is not in the selected slice. So, the difference between `stop` and `start` is the number of elements selected (if `step` is 1, the default).
+The other feature is that `start` or `stop` may be a negative number, which means it counts from the end of the array instead of the beginning. So:
+
+```python
+a[-1]    # last item in the array
+a[-2:]   # last two items in the array
+a[:-2]   # everything except the last two items
+```
+
+Similarly, `step` may be a negative number:
+
+```python
+a[::-1]    # all items in the array, reversed
+a[1::-1]   # the first two items, reversed
+a[:-3:-1]  # the last two items, reversed
+a[-3::-1]  # everything except the last two items, reversed
+```
+
+Python is kind to the programmer if there are fewer items than you ask for. For example, if you ask for `a[:-2]` and ``a only contains one element, you get an empty list instead of an error. Sometimes you would prefer the error, so you have to be aware that this may happen.
+Relation to `slice()` object
+The slicing operator `[]` is actually being used in the above code with a `slice()` object using the ``: notation (which is only valid within `[]`), i.e.:
+
+```python
+a[start:stop:step]
+```
+
+is equivalent to:
+
+```python
+a[slice(start, stop, step)]
+```
+
+Slice objects also behave slightly differently depending on the number of arguments, similarly to `range()`, i.e. both `slice(stop)` and `slice(start, stop[, step])` are supported.
+To skip specifying a given argument, one might use `None`, so that e.g. `a[start:]` is equivalent to `a[slice(start, None)]` or `a[::-1]` is equivalent to `a[slice(None, None, -1)]`.
+While the ``:-based notation is very helpful for simple slicing, the explicit use of `slice()` objects simplifies the programmatic generation of slicing.
+
+## [What is the difference between Python's list methods append and extend?](https://stackoverflow.com/questions/252703/what-is-the-difference-between-pythons-list-methods-append-and-extend)
+
+**3116 Votes**, Claudiu
+
+`append`: Appends object at the end.
+
+```python
+x = [1, 2, 3]
+x.append([4, 5])
+print (x)
+```
+
+gives you: `[1, 2, 3, [4, 5]]`
+
+`extend`: Extends list by appending elements from the iterable.
+
+```python
+x = [1, 2, 3]
+x.extend([4, 5])
+print (x)
+```
+
+gives you: `[1, 2, 3, 4, 5]`
+
+## [Finding the index of an item in a list](https://stackoverflow.com/questions/176918/finding-the-index-of-an-item-in-a-list)
+
+**3073 Votes**, Eugene M
+
+```python
+>>> ["foo", "bar", "baz"].index("bar")
+1
+```
+
+Reference: Data Structures > More on Lists
+Caveats follow
+Note that while this is perhaps the cleanest way to answer the question as asked, `index` is a rather weak component of the `list` API, and I can't remember the last time I used it in anger. It's been pointed out to me in the comments that because this answer is heavily referenced, it should be made more complete. Some caveats about `list.index` follow. It is probably worth initially taking a look at the documentation for it:
+
+
+```python
+list.index(x[, start[, end]])
+```
+
+Return zero-based index in the list of the first item whose value is equal to x. Raises a `ValueError` if there is no such item.
+The optional arguments start and end are interpreted as in the slice notation and are used to limit the search to a particular subsequence of the list. The returned index is computed relative to the beginning of the full sequence rather than the start argument.
+
+
+### Linear time-complexity in list length
+
+An `index` call checks every element of the list in order, until it finds a match. If your list is long, and you don't know roughly where in the list it occurs, this search could become a bottleneck. In that case, you should consider a different data structure. Note that if you know roughly where to find the match, you can give `index` a hint. For instance, in this snippet, `l.index(999_999, 999_990, 1_000_000)` is roughly five orders of magnitude faster than straight `l.index(999_999)`, because the former only has to search 10 entries, while the latter searches a million:
+
+```python
+>>> import timeit
+>>> timeit.timeit('l.index(999_999)', setup='l = list(range(0, 1_000_000))', number=1000)
+9.356267921015387
+>>> timeit.timeit('l.index(999_999, 999_990, 1_000_000)', setup='l = list(range(0, 1_000_000))', number=1000)
+0.0004404920036904514
+```
+
+
+### Only returns the index of the first match to its argument
+
+A call to `index` searches through the list in order until it finds a match, and stops there. If you expect to need indices of more matches, you should use a list comprehension, or generator expression.
+
+```python
+>>> [1, 1].index(1)
+0
+>>> [i for i, e in enumerate([1, 2, 1]) if e == 1]
+[0, 2]
+>>> g = (i for i, e in enumerate([1, 2, 1]) if e == 1)
+>>> next(g)
+0
+>>> next(g)
+2
+```
+
+Most places where I once would have used `index`, I now use a list comprehension or generator expression because they're more generalizable. So if you're considering reaching for `index`, take a look at these excellent Python features.
+
+### Throws if element not present in list
+
+A call to `index` results in a `ValueError` if the item's not present.
+
+```python
+>>> [1, 1].index(2)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: 2 is not in list
+```
+
+If the item might not be present in the list, you should either 
+
+Check for it first with `item in my_list` (clean, readable approach), or
+Wrap the `index` call in a `try/except` block which catches `ValueError` (probably faster, at least when the list to search is long, and the item is usually present.)
 
 ## [Using global variables in a function](https://stackoverflow.com/questions/423379/using-global-variables-in-a-function)
 
-**2388 Votes**, user46646
+**3059 Votes**, user46646
 
 You can use a global variable in other functions by declaring it as `global` in each function that assigns to it:
 
@@ -1000,21 +1442,87 @@ print_globvar()       # Prints 1
 I imagine the reason for it is that, since global variables are so dangerous, Python wants to make sure that you really know that's what you're playing with by explicitly requiring the `global` keyword.
 See other answers if you want to share a global variable across modules.
 
+## [Iterating over dictionaries using 'for' loops](https://stackoverflow.com/questions/3294889/iterating-over-dictionaries-using-for-loops)
+
+**3055 Votes**, TopChef
+
+`key` is just a variable name.  
+
+```python
+for key in d:
+```
+
+will simply loop over the keys in the dictionary, rather than the keys and values.  To loop over both key and value you can use the following:
+For Python 3.x:
+
+```python
+for key, value in d.items():
+```
+
+For Python 2.x:
+
+```python
+for key, value in d.iteritems():
+```
+
+To test for yourself, change the word `key` to `poop`.
+In Python 3.x, `iteritems()` was replaced with simply `items()`, which returns a set-like view backed by the dict, like `iteritems()` but even better. 
+This is also available in 2.7 as `viewitems()`. 
+The operation `items()` will work for both 2 and 3, but in 2 it will return a list of the dictionary's `(key, value)` pairs, which will not reflect changes to the dict that happen after the `items()` call. If you want the 2.x behavior in 3.x, you can call `list(d.items())`.
+
+## [How to get the current time in Python](https://stackoverflow.com/questions/415511/how-to-get-the-current-time-in-python)
+
+**2795 Votes**, user46646
+
+Use:
+
+```python
+>>> import datetime
+>>> datetime.datetime.now()
+datetime.datetime(2009, 1, 6, 15, 8, 24, 78915)
+
+>>> print(datetime.datetime.now())
+2009-01-06 15:08:24.789150
+```
+
+And just the time:
+
+```python
+>>> datetime.datetime.now().time()
+datetime.time(15, 8, 24, 78915)
+
+>>> print(datetime.datetime.now().time())
+15:08:24.789150
+```
+
+See the documentation for more information.
+To save typing, you can import the `datetime` object from the `datetime` module:
+
+```python
+>>> from datetime import datetime
+```
+
+Then remove the leading `datetime.` from all of the above.
+
 ## [How to make a chain of function decorators?](https://stackoverflow.com/questions/739654/how-to-make-a-chain-of-function-decorators)
 
-**2351 Votes**, Imran
+**2716 Votes**, Imran
 
 Check out the documentation to see how decorators work. Here is what you asked for:
 
 ```python
+from functools import wraps
+
 def makebold(fn):
-    def wrapped():
-        return "<b>" + fn() + "</b>"
+    @wraps(fn)
+    def wrapped(*args, **kwargs):
+        return "<b>" + fn(*args, **kwargs) + "</b>"
     return wrapped
 
 def makeitalic(fn):
-    def wrapped():
-        return "<i>" + fn() + "</i>"
+    @wraps(fn)
+    def wrapped(*args, **kwargs):
+        return "<i>" + fn(*args, **kwargs) + "</i>"
     return wrapped
 
 @makebold
@@ -1022,143 +1530,48 @@ def makeitalic(fn):
 def hello():
     return "hello world"
 
-print hello() ## returns "<b><i>hello world</i></b>"
+@makebold
+@makeitalic
+def log(s):
+    return s
+
+print hello()        # returns "<b><i>hello world</i></b>"
+print hello.__name__ # with functools.wraps() this returns "hello"
+print log('hello')   # returns "<b><i>hello</i></b>"
 ```
 
-## [Understanding Python's slice notation](https://stackoverflow.com/questions/509211/understanding-pythons-slice-notation)
+## [How can I make a time delay in Python? [duplicate]](https://stackoverflow.com/questions/510348/how-can-i-make-a-time-delay-in-python)
 
-**2183 Votes**, Simon
-
-It's pretty simple really:
+**2710 Votes**, user46646
 
 ```python
-a[start:end] # items start through end-1
-a[start:]    # items start through the rest of the array
-a[:end]      # items from the beginning through end-1
-a[:]         # a copy of the whole array
+import time
+time.sleep(5)   # Delays for 5 seconds. You can also use a float value.
 ```
 
-There is also the `step` value, which can be used with any of the above:
+Here is another example where something is run approximately once a minute:
 
 ```python
-a[start:end:step] # start through not past end, by step
+import time
+while True:
+    print("This prints once a minute.")
+    time.sleep(60) # Delay for 1 minute (60 seconds).
 ```
-
-The key point to remember is that the `:end` value represents the first value that is not in the selected slice. So, the difference beween `end` and `start` is the number of elements selected (if `step` is 1, the default).
-The other feature is that `start` or `end` may be a negative number, which means it counts from the end of the array instead of the beginning. So:
-
-```python
-a[-1]    # last item in the array
-a[-2:]   # last two items in the array
-a[:-2]   # everything except the last two items
-```
-
-Similarly, `step` may be a negative number:
-
-```python
-a[::-1]    # all items in the array, reversed
-a[1::-1]   # the first two items, reversed
-a[:-3:-1]  # the last two items, reversed
-a[-3::-1]  # everything except the last two items, reversed
-```
-
-Python is kind to the programmer if there are fewer items than you ask for. For example, if you ask for `a[:-2]` and ``a only contains one element, you get an empty list instead of an error. Sometimes you would prefer the error, so you have to be aware that this may happen.
-
-## [How do I install pip on Windows?](https://stackoverflow.com/questions/4750806/how-do-i-install-pip-on-windows)
-
-**2173 Votes**, community-wiki
-
-### Python 2.7.9+ and 3.4+
-
-Good news! Python 3.4 (released March 2014) and Python 2.7.9 (released December 2014) ship with Pip. This is the best feature of any Python release. It makes the community's wealth of libraries accessible to everyone. Newbies are no longer excluded from using community libraries by the prohibitive difficulty of setup. In shipping with a package manager, Python joins Ruby, Node.js, Haskell, Perl, Go--almost every other contemporary language with a majority open-source community. Thank you Python.
-Of course, that doesn't mean Python packaging is problem solved. The experience remains frustrating. I discuss this in Stack Overflow question Does Python have a package/module management system?.
-And, alas for everyone using Python 2.7.8 or earlier (a sizable portion of the community). There's no plan to ship Pip to you. Manual instructions follow.
-
-### Python 2  2.7.8 and Python 3  3.3
-
-Flying in the face of its 'batteries included' motto, Python ships without a package manager. To make matters worse, Pip was--until recently--ironically difficult to install.
-Official instructions
-Per https://pip.pypa.io/en/stable/installing/#do-i-need-to-install-pip:
-Download `get-pip.py`, being careful to save it as a `.py` file rather than `.txt`. Then, run it from the command prompt:
-
-```python
-python get-pip.py
-```
-
-You possibly need an administrator command prompt to do this. Follow Start a Command Prompt as an Administrator (Microsoft TechNet).
-This installs the pip package, which (in Windows) contains ...\Scripts\pip.exe that path must be in PATH environment variable to use pip from the command line (see the second part of 'Alternative Instructions' for adding it to your PATH,
-Alternative instructions
-The official documentation tells users to install Pip and each of its dependencies from source. That's tedious for the experienced and prohibitively difficult for newbies.
-For our sake, Christoph Gohlke prepares Windows installers (`.msi`) for popular Python packages. He builds installers for all Python versions, both 32 and 64 bit. You need to:
-
-Install setuptools
-Install pip
-
-For me, this installed Pip at `C:\Python27\Scripts\pip.exe`. Find `pip.exe` on your computer, then add its folder (for example, `C:\Python27\Scripts`) to your path (Start / Edit environment variables). Now you should be able to run `pip` from the command line. Try installing a package:
-
-```python
-pip install httpie
-```
-
-There you go (hopefully)! Solutions for common problems are given below:
-Proxy problems
-If you work in an office, you might be behind an HTTP proxy. If so, set the environment variables `http_proxy` and `https_proxy`. Most Python applications (and other free software) respect these. Example syntax:
-
-```python
-http://proxy_url:port
-http://username:password@proxy_url:port
-```
-
-If you're really unlucky, your proxy might be a Microsoft NTLM proxy. Free software can't cope. The only solution is to install a free software friendly proxy that forwards to the nasty proxy. http://cntlm.sourceforge.net/
-Unable to find vcvarsall.bat
-Python modules can be partly written in C or C++. Pip tries to compile from source. If you don't have a C/C++ compiler installed and configured, you'll see this cryptic error message.
-
-Error: Unable to find vcvarsall.bat
-
-You can fix that by installing a C++ compiler such as MinGW or Visual C++. Microsoft actually ships one specifically for use with Python. Or try Microsoft Visual C++ Compiler for Python 2.7.
-Often though it's easier to check Christoph's site for your package.
-
-## [Finding the index of an item given a list containing it in Python](https://stackoverflow.com/questions/176918/finding-the-index-of-an-item-given-a-list-containing-it-in-python)
-
-**2132 Votes**, Eugene M
-
-```python
->>> ["foo", "bar", "baz"].index("bar")
-1
-```
-
-Reference: [Data Structures > More on Lists][http://docs.python.org/2/tutorial/datastructures.html#more-on-lists]
-Note that this only returns the index of the first instance of the item, and results in a `ValueError` if it's not present.
-
-```python
->>> [1, 1].index(1)
-0
->>> [1, 1].index(2)
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-ValueError: 2 is not in list
-```
-
-If the item might not be present in the list, you should either 
-
-check for it first with `item in my_list` (clean, readable approach), or
-wrap the `index` call in a `try/except` block which catches `ValueError` (probably faster, at least when the list to search is long and the item is usually present.)
 
 ## [Check if a given key already exists in a dictionary](https://stackoverflow.com/questions/1602934/check-if-a-given-key-already-exists-in-a-dictionary)
 
-**2070 Votes**, Mohan Gulati
+**2683 Votes**, Mohan Gulati
 
 `in` is the intended way to test for the existence of a key in a `dict`.
 
 ```python
-d = dict()
+d = {"key1": 10, "key2": 23}
 
-for i in xrange(100):
-    key = i % 10
-    if key in d:
-        d[key] += 1
-    else:
-        d[key] = 1
+if "key1" in d:
+    print("this will execute")
+
+if "nonexistent key" in d:
+    print("this will not")
 ```
 
 If you wanted a default, you can always use `dict.get()`:
@@ -1166,27 +1579,27 @@ If you wanted a default, you can always use `dict.get()`:
 ```python
 d = dict()
 
-for i in xrange(100):
+for i in range(100):
     key = i % 10
     d[key] = d.get(key, 0) + 1
 ```
 
-... and if you wanted to always ensure a default value for any key you can use `defaultdict` from the `collections` module, like so:
+and if you wanted to always ensure a default value for any key you can either use `dict.setdefault()` repeatedly or `defaultdict` from the `collections` module, like so:
 
 ```python
 from collections import defaultdict
 
-d = defaultdict(lambda: 0)
+d = defaultdict(int)
 
-for i in xrange(100):
+for i in range(100):
     d[i % 10] += 1
 ```
 
-... but in general, the `in` keyword is the best way to do it.
+but in general, the `in` keyword is the best way to do it.
 
 ## [Difference between __str__ and __repr__?](https://stackoverflow.com/questions/1436703/difference-between-str-and-repr)
 
-**2030 Votes**, Casebash
+**2674 Votes**, Casebash
 
 Alex summarized well but, surprisingly, was too succinct.
 First, let me reiterate the main points in Alexs post:
@@ -1217,14 +1630,14 @@ Note: I used `%r` above, not `%s`. You always want to use `repr()` [or `%r` form
 The goal of `__str__` is to be readable
 Specifically, it is not intended to be unambiguous  notice that `str(3)==str("3")`. Likewise, if you implement an IP abstraction, having the str of it look like 192.168.1.1 is just fine. When implementing a date/time abstraction, the str can be "2010/4/12 15:35:22", etc. The goal is to represent it in a way that a user, not a programmer, would want to read it. Chop off useless digits, pretend to be some other class  as long is it supports readability, it is an improvement.
 Containers `__str__` uses contained objects `__repr__`
-This seems surprising, doesnt it? It is a little, but how readable would
+This seems surprising, doesnt it? It is a little, but how readable would it be if it used their `__str__`?
 
 ```python
 [moshe is, 3, hello
 world, this is a list, oh I don't know, containing just 4 elements]
 ```
 
-be? Not very. Specifically, the strings in a container would find it way too easy to disturb its string representation. In the face of ambiguity, remember, Python resists the temptation to guess. If you want the above behavior when youre printing a list, just
+Not very. Specifically, the strings in a container would find it way too easy to disturb its string representation. In the face of ambiguity, remember, Python resists the temptation to guess. If you want the above behavior when youre printing a list, just
 
 ```python
 print "[" + ", ".join(l) + "]"
@@ -1232,21 +1645,34 @@ print "[" + ", ".join(l) + "]"
 
 (you can probably also figure out what to do about dictionaries.
 Summary
-Implement `__repr__` for any class you implement. This should be second nature. Implement `__str__` if you think it would be useful to have a string version which errs on the side of more readability in favor of more ambiguity.
+Implement `__repr__` for any class you implement. This should be second nature. Implement `__str__` if you think it would be useful to have a string version which errs on the side of readability.
 
-## [Least Astonishment and the Mutable Default Argument](https://stackoverflow.com/questions/1132941/least-astonishment-and-the-mutable-default-argument)
+## [Catch multiple exceptions in one line (except block)](https://stackoverflow.com/questions/6470428/catch-multiple-exceptions-in-one-line-except-block)
 
-**2010 Votes**, Stefano Borini
+**2672 Votes**, inspectorG4dget
 
-Actually, this is not a design flaw, and it is not because of internals, or performance.
-It comes simply from the fact that functions in Python are first-class objects, and not only a piece of code.
-As soon as you get to think into this way, then it completely makes sense: a function is an object being evaluated on its definition; default parameters are kind of "member data" and therefore their state may change from one call to the other - exactly as in any other object.
-In any case, Effbot has a very nice explanation of the reasons for this behavior in Default Parameter Values in Python.
-I found it very clear, and I really suggest reading it for a better knowledge of how function objects work.
+From Python Documentation:
+
+An except clause may name multiple exceptions as a parenthesized tuple, for example
+
+
+```python
+except (IDontLikeYouException, YouAreBeingMeanException) as e:
+    pass
+```
+
+Or, for Python 2 only:
+
+```python
+except (IDontLikeYouException, YouAreBeingMeanException), e:
+    pass
+```
+
+Separating the exception from the variable with a comma will still work in Python 2.6 and 2.7, but is now deprecated and does not work in Python 3; now you should be using `as`.
 
 ## [How do I pass a variable by reference?](https://stackoverflow.com/questions/986006/how-do-i-pass-a-variable-by-reference)
 
-**2006 Votes**, David Sykes
+**2579 Votes**, David Sykes
 
 Arguments are passed by assignment. The rationale behind this is twofold:
 
@@ -1373,220 +1799,108 @@ do_something_with(wrapper[0])
 
 Although this seems a little cumbersome.
 
-## [Iterating over dictionaries using 'for' loops](https://stackoverflow.com/questions/3294889/iterating-over-dictionaries-using-for-loops)
+## [Least Astonishment and the Mutable Default Argument](https://stackoverflow.com/questions/1132941/least-astonishment-and-the-mutable-default-argument)
 
-**1979 Votes**, TopChef
+**2557 Votes**, Stefano Borini
 
-`key` is just a variable name.  
+Actually, this is not a design flaw, and it is not because of internals, or performance.
+It comes simply from the fact that functions in Python are first-class objects, and not only a piece of code.
+As soon as you get to think into this way, then it completely makes sense: a function is an object being evaluated on its definition; default parameters are kind of "member data" and therefore their state may change from one call to the other - exactly as in any other object.
+In any case, Effbot has a very nice explanation of the reasons for this behavior in Default Parameter Values in Python.
+I found it very clear, and I really suggest reading it for a better knowledge of how function objects work.
 
-```python
-for key in d:
-```
+## [How can I add new keys to a dictionary?](https://stackoverflow.com/questions/1024847/how-can-i-add-new-keys-to-a-dictionary)
 
-will simply loop over the keys in the dictionary, rather than the keys and values.  To loop over both key and value you can use the following:
-For Python 2.x:
-
-```python
-for key, value in d.iteritems():
-```
-
-For Python 3.x:
+**2552 Votes**, lfaraone
 
 ```python
-for key, value in d.items():
+d = {'key': 'value'}
+print(d)
+# {'key': 'value'}
+d['mynewkey'] = 'mynewvalue'
+print(d)
+# {'key': 'value', 'mynewkey': 'mynewvalue'}
 ```
 
-To test for yourself, change the word `key` to `poop`.
-For Python 3.x, `iteritems()` has been replaced with simply `items()`, which returns a set-like view backed by the dict, like `iteritems()` but even better. 
-This is also available in 2.7 as `viewitems()`. 
-The operation `items()` will work for both 2 and 3, but in 2 it will return a list of the dictionary's `(key, value)` pairs, which will not reflect changes to the dict that happen after the `items()` call. If you want the 2.x behavior in 3.x, you can call `list(d.items())`.
+## [How to install pip on Windows?](https://stackoverflow.com/questions/4750806/how-to-install-pip-on-windows)
 
-## [Making a flat list out of list of lists in Python](https://stackoverflow.com/questions/952914/making-a-flat-list-out-of-list-of-lists-in-python)
+**2520 Votes**, community-wiki
 
-**1959 Votes**, Emma
+### Python 2.7.9+ and 3.4+
+
+Good news! Python 3.4 (released March 2014) and Python 2.7.9 (released December 2014) ship with Pip. This is the best feature of any Python release. It makes the community's wealth of libraries accessible to everyone. Newbies are no longer excluded from using community libraries by the prohibitive difficulty of setup. In shipping with a package manager, Python joins Ruby, Node.js, Haskell, Perl, Goalmost every other contemporary language with a majority open-source community. Thank you, Python.
+If you do find that pip is not available when using Python 3.4+ or Python 2.7.9+, simply execute e.g.:
 
 ```python
-flat_list = [item for sublist in l for item in sublist]
+py -3 -m ensurepip
 ```
 
-which means:
+Of course, that doesn't mean Python packaging is problem solved. The experience remains frustrating. I discuss this in the Stack Overflow question Does Python have a package/module management system?.
+And, alas for everyone using Python 2.7.8 or earlier (a sizable portion of the community). There's no plan to ship Pip to you. Manual instructions follow.
+
+### Python 2  2.7.8 and Python 3  3.3
+
+Flying in the face of its 'batteries included' motto, Python ships without a package manager. To make matters worse, Pip wasuntil recentlyironically difficult to install.
+Official instructions
+Per https://pip.pypa.io/en/stable/installing/#do-i-need-to-install-pip:
+Download `get-pip.py`, being careful to save it as a `.py` file rather than `.txt`. Then, run it from the command prompt:
 
 ```python
-for sublist in l:
-    for item in sublist:
-        flat_list.append(item)
+python get-pip.py
 ```
 
-is faster than the shortcuts posted so far. (``l is the list to flatten.)
-Here is a the corresponding function:
+You possibly need an administrator command prompt to do this. Follow Start a Command Prompt as an Administrator (Microsoft TechNet).
+This installs the pip package, which (in Windows) contains ...\Scripts\pip.exe that path must be in PATH environment variable to use pip from the command line (see the second part of 'Alternative Instructions' for adding it to your PATH,
+Alternative instructions
+The official documentation tells users to install Pip and each of its dependencies from source. That's tedious for the experienced and prohibitively difficult for newbies.
+For our sake, Christoph Gohlke prepares Windows installers (`.msi`) for popular Python packages. He builds installers for all Python versions, both 32 and 64 bit. You need to:
+
+Install setuptools
+Install pip
+
+For me, this installed Pip at `C:\Python27\Scripts\pip.exe`. Find `pip.exe` on your computer, then add its folder (for example, `C:\Python27\Scripts`) to your path (Start / Edit environment variables). Now you should be able to run `pip` from the command line. Try installing a package:
 
 ```python
-flatten = lambda l: [item for sublist in l for item in sublist]
+pip install httpie
 ```
 
-For evidence, as always, you can use the `timeit` module in the standard library:
+There you go (hopefully)! Solutions for common problems are given below:
+Proxy problems
+If you work in an office, you might be behind an HTTP proxy. If so, set the environment variables `http_proxy` and `https_proxy`. Most Python applications (and other free software) respect these. Example syntax:
 
 ```python
-$ python -mtimeit -s'l=[[1,2,3],[4,5,6], [7], [8,9]]*99' '[item for sublist in l for item in sublist]'
-10000 loops, best of 3: 143 usec per loop
-$ python -mtimeit -s'l=[[1,2,3],[4,5,6], [7], [8,9]]*99' 'sum(l, [])'
-1000 loops, best of 3: 969 usec per loop
-$ python -mtimeit -s'l=[[1,2,3],[4,5,6], [7], [8,9]]*99' 'reduce(lambda x,y: x+y,l)'
-1000 loops, best of 3: 1.1 msec per loop
+http://proxy_url:port
+http://username:password@proxy_url:port
 ```
 
-Explanation: the shortcuts based on ``+ (including the implied use in `sum`) are, of necessity, `O(L**2)` when there are L sublists -- as the intermediate result list keeps getting longer, at each step a new intermediate result list object gets allocated, and all the items in the previous intermediate result must be copied over (as well as a few new ones added at the end). So (for simplicity and without actual loss of generality) say you have L sublists of I items each: the first I items are copied back and forth L-1 times, the second I items L-2 times, and so on; total number of copies is I times the sum of x for x from 1 to L excluded, i.e., `I * (L**2)/2`.
-The list comprehension just generates one list, once, and copies each item over (from its original place of residence to the result list) also exactly once.
+If you're really unlucky, your proxy might be a Microsoft NTLM proxy. Free software can't cope. The only solution is to install a free software friendly proxy that forwards to the nasty proxy. http://cntlm.sourceforge.net/
+Unable to find vcvarsall.bat
+Python modules can be partly written in C or C++. Pip tries to compile from source. If you don't have a C/C++ compiler installed and configured, you'll see this cryptic error message.
 
-## [How can I make a time delay in Python?](https://stackoverflow.com/questions/510348/how-can-i-make-a-time-delay-in-python)
+Error: Unable to find vcvarsall.bat
 
-**1919 Votes**, user46646
-
-```python
-import time
-time.sleep(5)   # delays for 5 seconds. You can Also Use Float Value.
-```
-
-Here is another example where something is run approximately once a minute:
-
-```python
-import time 
-while True:
-    print("This prints once a minute.")
-    time.sleep(60)   # Delay for 1 minute (60 seconds).
-```
+You can fix that by installing a C++ compiler such as MinGW or Visual C++. Microsoft actually ships one specifically for use with Python. Or try Microsoft Visual C++ Compiler for Python 2.7.
+Often though it's easier to check Christoph's site for your package.
 
 ## [Understanding Python super() with __init__() methods [duplicate]](https://stackoverflow.com/questions/576169/understanding-python-super-with-init-methods)
 
-**1901 Votes**, Mizipzor
+**2489 Votes**, Mizipzor
 
 `super()` lets you avoid referring to the base class explicitly, which can be nice. But the main advantage comes with multiple inheritance, where all sorts of fun stuff can happen. See the standard docs on super if you haven't already.
-Note that the syntax changed in Python 3.0: you can just say `super().__init__()` instead of `super(ChildB, self).__init__()` which IMO is quite a bit nicer.
-
-## [Catch multiple exceptions in one line (except block)](https://stackoverflow.com/questions/6470428/catch-multiple-exceptions-in-one-line-except-block)
-
-**1876 Votes**, inspectorG4dget
-
-From Python Documentation:
-
-An except clause may name multiple exceptions as a parenthesized tuple, for example
-
-
-```python
-except (IDontLikeYouException, YouAreBeingMeanException) as e:
-    pass
-```
-
-Or, for Python 2 only:
-
-```python
-except (IDontLikeYouException, YouAreBeingMeanException), e:
-    pass
-```
-
-Separating the exception from the variable with a comma will still work in Python 2.6 and 2.7, but is now deprecated and does not work in Python 3; now you should be using `as`.
-
-## [How to get current time in Python?](https://stackoverflow.com/questions/415511/how-to-get-current-time-in-python)
-
-**1863 Votes**, user46646
-
-```python
->>> import datetime
->>> datetime.datetime.now()
-datetime(2009, 1, 6, 15, 8, 24, 78915)
-```
-
-And just the time:
-
-```python
->>> datetime.datetime.time(datetime.datetime.now())
-datetime.time(15, 8, 24, 78915)
-```
-
-The same but slightly more compact:
-
-```python
->>> datetime.datetime.now().time()
-```
-
-See the documentation for more info.
-To save typing, you can import the `datetime` object from the `datetime` module:
-
-```python
->>> from datetime import datetime
-```
-
-Then remove the leading `datetime.` from all the above.
-
-## [Is there a way to run Python on Android? [closed]](https://stackoverflow.com/questions/101754/is-there-a-way-to-run-python-on-android)
-
-**1841 Votes**, e-satis
-
-One way is to use Kivy:
-
-Open source Python library for rapid development of applications
-  that make use of innovative user interfaces, such as multi-touch apps.
-
-
-
-Kivy runs on Linux, Windows, OS X, Android and iOS. You can run the same [python] code on all supported platforms.
-
-Kivy Showcase app
-
-## [Add new keys to a dictionary?](https://stackoverflow.com/questions/1024847/add-new-keys-to-a-dictionary)
-
-**1831 Votes**, lfaraone
-
-```python
->>> d = {'key':'value'}
->>> print(d)
-{'key': 'value'}
->>> d['mynewkey'] = 'mynewvalue'
->>> print(d)
-{'mynewkey': 'mynewvalue', 'key': 'value'}
-```
-
-## [How do I parse a string to a float or int in Python?](https://stackoverflow.com/questions/379906/how-do-i-parse-a-string-to-a-float-or-int-in-python)
-
-**1708 Votes**, Tristan Havelick
-
-```python
->>> a = "545.2222"
->>> float(a)
-545.22220000000004
->>> int(float(a))
-545
-```
-
-## [How do I install pip on macOS or OS X?](https://stackoverflow.com/questions/17271319/how-do-i-install-pip-on-macos-or-os-x)
-
-**1677 Votes**, The System
-
-All you need to do is
-
-```python
-sudo easy_install pip
-```
-
-## [In Python, how do I read a file line-by-line into a list?](https://stackoverflow.com/questions/3277503/in-python-how-do-i-read-a-file-line-by-line-into-a-list)
-
-**1630 Votes**, Julie Raswick
-
-```python
-with open(fname) as f:
-    content = f.readlines()
-# you may also want to remove whitespace characters like `\n` at the end of each line
-content = [x.strip() for x in content] 
-```
-
-I'm guessing that you meant `list` and not array.
+Note that the syntax changed in Python 3.0: you can just say `super().__init__()` instead of `super(ChildB, self).__init__()` which IMO is quite a bit nicer. The standard docs also refer to a guide to using `super()` which is quite explanatory.
 
 ## [How to clone or copy a list?](https://stackoverflow.com/questions/2612802/how-to-clone-or-copy-a-list)
 
-**1612 Votes**, aF.
+**2468 Votes**, aF.
 
 With `new_list = my_list`, you don't actually have two lists. The assignment just copies the reference to the list, not the actual list, so both `new_list` and `my_list` refer to the same list after the assignment.
 To actually copy the list, you have various possibilities:
+
+You can use the builtin `list.copy()` method (available since Python 3.3):
+
+```python
+new_list = old_list.copy()
+```
 
 You can slice it: 
 
@@ -1628,37 +1942,39 @@ class Foo(object):
          self.val = val
 
     def __repr__(self):
-        return str(self.val)
+        return 'Foo({!r})'.format(self.val)
 
 foo = Foo(1)
 
 a = ['foo', foo]
-b = a[:]
-c = list(a)
-d = copy.copy(a)
-e = copy.deepcopy(a)
+b = a.copy()
+c = a[:]
+d = list(a)
+e = copy.copy(a)
+f = copy.deepcopy(a)
 
 # edit orignal list and instance 
 a.append('baz')
 foo.val = 5
 
-print('original: %r\n slice: %r\n list(): %r\n copy: %r\n deepcopy: %r'
-      % (a, b, c, d, e))
+print('original: %r\nlist.copy(): %r\nslice: %r\nlist(): %r\ncopy: %r\ndeepcopy: %r'
+      % (a, b, c, d, e, f))
 ```
 
 Result:
 
 ```python
-original: ['foo', 5, 'baz']
-slice: ['foo', 5]
-list(): ['foo', 5]
-copy: ['foo', 5]
-deepcopy: ['foo', 1]
+original: ['foo', Foo(5), 'baz']
+list.copy(): ['foo', Foo(5)]
+slice: ['foo', Foo(5)]
+list(): ['foo', Foo(5)]
+copy: ['foo', Foo(5)]
+deepcopy: ['foo', Foo(1)]
 ```
 
-## [How to concatenate two lists in Python?](https://stackoverflow.com/questions/1720421/how-to-concatenate-two-lists-in-python)
+## [How do I concatenate two lists in Python?](https://stackoverflow.com/questions/1720421/how-do-i-concatenate-two-lists-in-python)
 
-**1573 Votes**, y2k
+**2448 Votes**, y2k
 
 You can use the ``+ operator to combine them:
 
@@ -1666,123 +1982,68 @@ You can use the ``+ operator to combine them:
 listone = [1,2,3]
 listtwo = [4,5,6]
 
-mergedlist = listone + listtwo
+joinedlist = listone + listtwo
 ```
 
 Output:
 
 ```python
->>> mergedlist
+>>> joinedlist
 [1,2,3,4,5,6]
 ```
 
-## [Is there a way to substring a string in Python?](https://stackoverflow.com/questions/663171/is-there-a-way-to-substring-a-string-in-python)
+## [How do I copy a file in Python?](https://stackoverflow.com/questions/123198/how-do-i-copy-a-file-in-python)
 
-**1531 Votes**, Joan Venge
+**2399 Votes**, Matt
 
-```python
->>> x = "Hello World!"
->>> x[2:]
-'llo World!'
->>> x[:2]
-'He'
->>> x[:-2]
-'Hello Worl'
->>> x[-2:]
-'d!'
->>> x[2:-2]
-'llo Worl'
-```
-
-Python calls this concept "slicing" and it works on more than just strings. Take a look here for a comprehensive introduction.
-
-## [How do you split a list into evenly sized chunks?](https://stackoverflow.com/questions/312443/how-do-you-split-a-list-into-evenly-sized-chunks)
-
-**1523 Votes**, jespern
-
-Here's a generator that yields the chunks you want:
+`shutil` has many methods you can use. One of which is:
 
 ```python
-def chunks(l, n):
-    """Yield successive n-sized chunks from l."""
-    for i in range(0, len(l), n):
-        yield l[i:i + n]
+from shutil import copyfile
+copyfile(src, dst)
 ```
 
 
+Copy the contents of the file named src to a file named dst.
+The destination location must be writable; otherwise, an IOError exception will be raised.
+If dst already exists, it will be replaced.
+Special files such as character or block devices and pipes cannot be copied with this function. 
+With copy, src and dst are path names given as strings. 
 
-```python
-import pprint
-pprint.pprint(list(chunks(range(10, 75), 10)))
-[[10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
- [20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
- [30, 31, 32, 33, 34, 35, 36, 37, 38, 39],
- [40, 41, 42, 43, 44, 45, 46, 47, 48, 49],
- [50, 51, 52, 53, 54, 55, 56, 57, 58, 59],
- [60, 61, 62, 63, 64, 65, 66, 67, 68, 69],
- [70, 71, 72, 73, 74]]
-```
-
-
-If you're using Python 2, you should use `xrange()` instead of `range()`:
-
-```python
-def chunks(l, n):
-    """Yield successive n-sized chunks from l."""
-    for i in xrange(0, len(l), n):
-        yield l[i:i + n]
-```
-
-
-Also you can simply use list comprehension instead of writing a function. Python 3:
-
-```python
-[l[i:i + n] for i in range(0, len(l), n)]
-```
-
-Python 2 version:
-
-```python
-[l[i:i + n] for i in xrange(0, len(l), n)]
-```
+If you use `os.path` operations, use `copy` rather than `copyfile.copyfile` will only accept strings.
 
 ## [What does ** (double star/asterisk) and * (star/asterisk) do for parameters?](https://stackoverflow.com/questions/36901/what-does-double-star-asterisk-and-star-asterisk-do-for-parameters)
 
-**1496 Votes**, Todd
+**2280 Votes**, Todd
 
 The `*args` and `**kwargs` is a common idiom to allow arbitrary number of arguments to functions as described in the section more on defining functions in the Python documentation.
 The `*args` will give you all function parameters as a tuple:
 
 ```python
-In [1]: def foo(*args):
-   ...:     for a in args:
-   ...:         print a
-   ...:         
-   ...:         
+def foo(*args):
+    for a in args:
+        print(a)        
 
-In [2]: foo(1)
-1
+foo(1)
+# 1
 
-
-In [4]: foo(1,2,3)
-1
-2
-3
+foo(1,2,3)
+# 1
+# 2
+# 3
 ```
 
 The `**kwargs` will give you all 
 keyword arguments except for those corresponding to a formal parameter as a dictionary.
 
 ```python
-In [5]: def bar(**kwargs):
-   ...:     for a in kwargs:
-   ...:         print a, kwargs[a]
-   ...:         
-   ...:         
+def bar(**kwargs):
+    for a in kwargs:
+        print(a, kwargs[a])  
 
-In [6]: bar(name='one', age=27)
-age 27
-name one
+bar(name='one', age=27)
+# age 27
+# name one
 ```
 
 Both idioms can be mixed with normal arguments to allow a set of fixed and some variable arguments:
@@ -1792,18 +2053,28 @@ def foo(kind, *args, **kwargs):
    pass
 ```
 
+It is also possible to use this the other way around:
+
+```python
+def foo(a, b, c):
+    print(a, b, c)
+
+obj = {'b':10, 'c':'lee'}
+
+foo(100,**obj)
+# 100 10 lee
+```
+
 Another usage of the `*l` idiom is to unpack argument lists when calling a function.
 
 ```python
-In [9]: def foo(bar, lee):
-   ...:     print bar, lee
-   ...:     
-   ...:     
+def foo(bar, lee):
+    print(bar, lee)
 
-In [10]: l = [1,2]
+l = [1,2]
 
-In [11]: foo(*l)
-1 2
+foo(*l)
+# 1 2
 ```
 
 In Python 3 it is possible to use `*l` on the left side of an assignment (Extended Iterable Unpacking), though it gives a list instead of a tuple in this context:
@@ -1822,110 +2093,20 @@ def func(arg1, arg2, arg3, *, kwarg1, kwarg2):
 
 Such function accepts only 3 positional arguments, and everything after ``* can only be passed as keyword arguments.
 
-## [Print in terminal with colors?](https://stackoverflow.com/questions/287871/print-in-terminal-with-colors)
+## [What is __init__.py for?](https://stackoverflow.com/questions/448271/what-is-init-py-for)
 
-**1475 Votes**, aboSamoor
+**2254 Votes**, Mat
 
-This somewhat depends on what platform you are on. The most common way to do this is by printing ANSI escape sequences. For a simple example, here's some python code from the blender build scripts:
+It used to be a required part of a package (old, pre-3.3 "regular package", not newer 3.3+ "namespace package").
+Here's the documentation.
 
-```python
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-```
+Python defines two types of packages, regular packages and namespace packages. Regular packages are traditional packages as they existed in Python 3.2 and earlier. A regular package is typically implemented as a directory containing an `__init__.py` file. When a regular package is imported, this `__init__.py` file is implicitly executed, and the objects it defines are bound to names in the packages namespace. The `__init__.py` file can contain the same Python code that any other module can contain, and Python will add some additional attributes to the module when it is imported.
 
-To use code like this, you can do something like 
-
-```python
-print bcolors.WARNING + "Warning: No active frommets remain. Continue?" 
-      + bcolors.ENDC
-```
-
-This will work on unixes including OS X, linux and windows (provided you use ANSICON, or in Windows 10 provided you enable VT100 emulation). There are ansi codes for setting the color, moving the cursor, and more.
-If you are going to get complicated with this (and it sounds like you are if you are writing a game), you should look into the "curses" module, which handles a lot of the complicated parts of this for you. The Python Curses HowTO is a good introduction.
-If you are not using extended ASCII (i.e. not on a PC), you are stuck with the ascii characters below 127, and '#' or '@' is probably your best bet for a block. If you can ensure your terminal is using a IBM extended ascii character set, you have many more options. Characters 176, 177, 178 and 219 are the "block characters".
-Some modern text-based programs, such as "Dwarf Fortress", emulate text mode in a graphical mode, and use images of the classic PC font. You can find some of these bitmaps that you can use on the Dwarf Fortress Wiki see (user-made tilesets).
-The Text Mode Demo Contest has more resources for doing graphics in text mode.
-Hmm.. I think got a little carried away on this answer. I am in the midst of planning an epic text-based adventure game, though. Good luck with your colored text!
-
-## [How to get the number of elements in a list in Python?](https://stackoverflow.com/questions/1712227/how-to-get-the-number-of-elements-in-a-list-in-python)
-
-**1464 Votes**, y2k
-
-The `len()` function can be used with a lot of types in Python - both built-in types and library types.
-
-```python
->>> len([1,2,3])
-3
-```
-
-## [Are static class variables possible?](https://stackoverflow.com/questions/68645/are-static-class-variables-possible)
-
-**1459 Votes**, Andrew Walker
-
-Variables declared inside the class definition, but not inside a method are class or static variables:
-
-```python
->>> class MyClass:
-...     i = 3
-...
->>> MyClass.i
-3 
-```
-
-As @millerdev points out, this creates a class-level ``i variable, but this is distinct from any instance-level ``i variable, so you could have
-
-```python
->>> m = MyClass()
->>> m.i = 4
->>> MyClass.i, m.i
->>> (3, 4)
-```
-
-This is different from C++ and Java, but not so different from C#, where a static member can't be accessed using a reference to an instance.
-See what the Python tutorial has to say on the subject of classes and class objects.
-@Steve Johnson has already answered regarding static methods, also documented under "Built-in Functions" in the Python Library Reference.
-
-```python
-class C:
-    @staticmethod
-    def f(arg1, arg2, ...): ...
-```
-
-@beidy recommends classmethods over staticmethod, as the method then receives the class type as the first argument, but I'm still a little fuzzy on the advantages of this approach over staticmethod. If you are too, then it probably doesn't matter.
-
-## [Hidden features of Python [closed]](https://stackoverflow.com/questions/101268/hidden-features-of-python)
-
-**1420 Votes**, community-wiki
-
-### Chaining comparison operators:
-
-
-```python
->>> x = 5
->>> 1 < x < 10
-True
->>> 10 < x < 20 
-False
->>> x < 10 < x*10 < 100
-True
->>> 10 > x <= 9
-True
->>> 5 == x > 4
-True
-```
-
-In case you're thinking it's doing `1 < x`, which comes out as `True`, and then comparing `True < 10`, which is also `True`, then no, that's really not what happens (see the last example.) It's really translating into `1 < x and x < 10`, and `x < 10 and 10 < x * 10 and x*10 < 100`, but with less typing and each term is only evaluated once.
+But just click the link, it contains an example, more information, and an explanation of namespace packages, the kind of packages without `__init__.py`.
 
 ## [Manually raising (throwing) an exception in Python](https://stackoverflow.com/questions/2052390/manually-raising-throwing-an-exception-in-python)
 
-**1420 Votes**, TIMEX
+**2213 Votes**, TIMEX
 
 ### How do I manually throw/raise an exception in Python?
 
@@ -1940,7 +2121,7 @@ raise ValueError('A very specific bad thing happened.')
 
 ### Don't raise generic exceptions
 
-Avoid raising a generic Exception. To catch it, you'll have to catch all other more specific exceptions that subclass it.
+Avoid raising a generic `Exception`. To catch it, you'll have to catch all other more specific exceptions that subclass it.
 Problem 1: Hiding bugs
 
 ```python
@@ -1962,7 +2143,7 @@ Caught this error: ValueError('Represents a hidden bug, do not catch this',)
 ```
 
 Problem 2: Won't catch
-and more specific catches won't catch the general exception:
+And more specific catches won't catch the general exception:
 
 ```python
 def demo_no_catch():
@@ -1994,7 +2175,7 @@ which also handily allows an arbitrary number of arguments to be passed to the c
 raise ValueError('A very specific bad thing happened', 'foo', 'bar', 'baz') 
 ```
 
-These arguments are accessed by the `args` attribute on the Exception object. For example:
+These arguments are accessed by the `args` attribute on the `Exception` object. For example:
 
 ```python
 try:
@@ -2009,7 +2190,7 @@ prints
 ('message', 'foo', 'bar', 'baz')    
 ```
 
-In Python 2.5, an actual `message` attribute was added to BaseException in favor of encouraging users to subclass Exceptions and stop using `args`, but the introduction of `message` and the original deprecation of args has been retracted.
+In Python 2.5, an actual `message` attribute was added to `BaseException` in favor of encouraging users to subclass Exceptions and stop using `args`, but the introduction of `message` and the original deprecation of args has been retracted.
 
 ### Best Practices: `except` clause
 
@@ -2042,7 +2223,7 @@ This is the syntax in Python 2 - note this is not compatible with Python 3:
     raise sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2]
 ```
 
-If you want to, you can modify what happens with your new raise - e.g. setting new args for the instance:
+If you want to, you can modify what happens with your new raise - e.g. setting new `args` for the instance:
 
 ```python
 def error():
@@ -2101,7 +2282,7 @@ Only valid in much older versions of Python (2.4 and lower), you may still see p
 raise 'message' # really really wrong. don't do this.
 ```
 
-In all modern versions, this will actually raise a TypeError, because you're not raising a BaseException type. If you're not checking for the right exception and don't have a reviewer that's aware of the issue, it could get into production.
+In all modern versions, this will actually raise a `TypeError`, because you're not raising a `BaseException` type. If you're not checking for the right exception and don't have a reviewer that's aware of the issue, it could get into production.
 
 ### Example Usage
 
@@ -2134,20 +2315,87 @@ if important_key not in resource_dict and not ok_to_be_missing:
     raise MyAppLookupError('resource is missing, and that is not ok.')
 ```
 
-## [How to convert string to lowercase in Python](https://stackoverflow.com/questions/6797984/how-to-convert-string-to-lowercase-in-python)
+## [How do you split a list into evenly sized chunks?](https://stackoverflow.com/questions/312443/how-do-you-split-a-list-into-evenly-sized-chunks)
 
-**1412 Votes**, Benjamin Didur
+**2202 Votes**, jespern
+
+Here's a generator that yields the chunks you want:
 
 ```python
-s = "Kilometer"
-print(s.lower())
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
 ```
 
-The official documentation is `str.lower()`.
+
+
+```python
+import pprint
+pprint.pprint(list(chunks(range(10, 75), 10)))
+[[10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+ [20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
+ [30, 31, 32, 33, 34, 35, 36, 37, 38, 39],
+ [40, 41, 42, 43, 44, 45, 46, 47, 48, 49],
+ [50, 51, 52, 53, 54, 55, 56, 57, 58, 59],
+ [60, 61, 62, 63, 64, 65, 66, 67, 68, 69],
+ [70, 71, 72, 73, 74]]
+```
+
+
+If you're using Python 2, you should use `xrange()` instead of `range()`:
+
+```python
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    for i in xrange(0, len(lst), n):
+        yield lst[i:i + n]
+```
+
+
+Also you can simply use list comprehension instead of writing a function, though it's a good idea to encapsulate operations like this in named functions so that your code is easier to understand. Python 3:
+
+```python
+[lst[i:i + n] for i in range(0, len(lst), n)]
+```
+
+Python 2 version:
+
+```python
+[lst[i:i + n] for i in xrange(0, len(lst), n)]
+```
+
+## [How do I parse a string to a float or int?](https://stackoverflow.com/questions/379906/how-do-i-parse-a-string-to-a-float-or-int)
+
+**2193 Votes**, Tristan Havelick
+
+```python
+>>> a = "545.2222"
+>>> float(a)
+545.22220000000004
+>>> int(float(a))
+545
+```
+
+## [Convert bytes to a string](https://stackoverflow.com/questions/606191/convert-bytes-to-a-string)
+
+**2191 Votes**, Tomas Sedovic
+
+You need to decode the bytes object to produce a string:
+
+```python
+>>> b"abcde"
+b'abcde'
+
+# utf-8 is used here because it is a very common encoding, but you
+# need to use the encoding your data is actually in.
+>>> b"abcde".decode("utf-8") 
+'abcde'
+```
 
 ## [Find current directory and file's directory [duplicate]](https://stackoverflow.com/questions/5137497/find-current-directory-and-files-directory)
 
-**1409 Votes**, John Howard
+**2155 Votes**, John Howard
 
 To get the full path to the directory a Python file is contained in, write this in that file:
 
@@ -2177,7 +2425,7 @@ The `__file__` constant
 
 ## [Converting string into datetime](https://stackoverflow.com/questions/466345/converting-string-into-datetime)
 
-**1389 Votes**, Oli
+**2133 Votes**, Oli
 
 `datetime.strptime` is the main routine for parsing strings into datetimes. It can handle all sorts of formats, with the format determined by a format string you give it:
 
@@ -2200,30 +2448,207 @@ Notes:
 `strftime` = "string format time"
 Pronounce it out loud today & you won't have to search for it again in 6 months.
 
-## [How do I copy a file in python?](https://stackoverflow.com/questions/123198/how-do-i-copy-a-file-in-python)
+## [How do I get a substring of a string in Python?](https://stackoverflow.com/questions/663171/how-do-i-get-a-substring-of-a-string-in-python)
 
-**1380 Votes**, Matt
-
-`shutil` has many methods you can use. One of which is:
+**2101 Votes**, Joan Venge
 
 ```python
-from shutil import copyfile
-
-copyfile(src, dst)
+>>> x = "Hello World!"
+>>> x[2:]
+'llo World!'
+>>> x[:2]
+'He'
+>>> x[:-2]
+'Hello Worl'
+>>> x[-2:]
+'d!'
+>>> x[2:-2]
+'llo Worl'
 ```
 
-Copy the contents of the file named `src` to a file named `dst`. The destination location must be writable; otherwise, an `IOError` exception will be raised. If `dst` already exists, it will be replaced. Special files such as character or block devices and pipes cannot be copied with this function. `src` and `dst` are path names given as strings.
+Python calls this concept "slicing" and it works on more than just strings. Take a look here for a comprehensive introduction.
 
-## [Replacements for switch statement in Python?](https://stackoverflow.com/questions/60208/replacements-for-switch-statement-in-python)
+## [Is there a way to run Python on Android?](https://stackoverflow.com/questions/101754/is-there-a-way-to-run-python-on-android)
 
-**1376 Votes**, Michael Schneider
+**2093 Votes**, e-satis
 
-You could use a dictionary:
+One way is to use Kivy:
+
+Open source Python library for rapid development of applications
+  that make use of innovative user interfaces, such as multi-touch apps.
+
+
+
+Kivy runs on Linux, Windows, OS X, Android and iOS. You can run the same [python] code on all supported platforms.
+
+Kivy Showcase app
+
+## [How to delete a file or folder?](https://stackoverflow.com/questions/6996603/how-to-delete-a-file-or-folder)
+
+**2077 Votes**, Zygimantas
+
+`os.remove()` removes a file.
+`os.rmdir()` removes an empty directory.
+`shutil.rmtree()` deletes a directory and all its contents.
+
+
+`Path` objects from the Python 3.4+ `pathlib` module also expose these instance methods:
+
+`pathlib.Path.unlink()` removes a file or symbolic link.
+`pathlib.Path.rmdir()` removes an empty directory.
+
+## [How to print colored text in terminal in Python?](https://stackoverflow.com/questions/287871/how-to-print-colored-text-in-terminal-in-python)
+
+**2066 Votes**, aboSamoor
+
+This somewhat depends on what platform you are on. The most common way to do this is by printing ANSI escape sequences. For a simple example, here's some python code from the blender build scripts:
 
 ```python
-def f(x):
-    return {
-        'a': 1,
-        'b': 2,
-    }[x]
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 ```
+
+To use code like this, you can do something like 
+
+```python
+print(bcolors.WARNING + "Warning: No active frommets remain. Continue?" + bcolors.ENDC)
+```
+
+or, with Python3.6+:
+
+```python
+print(f"{bcolors.WARNING}Warning: No active frommets remain. Continue?{bcolors.ENDC}")
+```
+
+This will work on unixes including OS X, linux and windows (provided you use ANSICON, or in Windows 10 provided you enable VT100 emulation). There are ansi codes for setting the color, moving the cursor, and more.
+If you are going to get complicated with this (and it sounds like you are if you are writing a game), you should look into the "curses" module, which handles a lot of the complicated parts of this for you. The Python Curses HowTO is a good introduction.
+If you are not using extended ASCII (i.e. not on a PC), you are stuck with the ascii characters below 127, and '#' or '@' is probably your best bet for a block. If you can ensure your terminal is using a IBM extended ascii character set, you have many more options. Characters 176, 177, 178 and 219 are the "block characters".
+Some modern text-based programs, such as "Dwarf Fortress", emulate text mode in a graphical mode, and use images of the classic PC font. You can find some of these bitmaps that you can use on the Dwarf Fortress Wiki see (user-made tilesets).
+The Text Mode Demo Contest has more resources for doing graphics in text mode.
+Hmm.. I think got a little carried away on this answer. I am in the midst of planning an epic text-based adventure game, though. Good luck with your colored text!
+
+## [Why is 1000000000000000 in range(1000000000000001) so fast in Python 3?](https://stackoverflow.com/questions/30081275/why-is-1000000000000000-in-range1000000000000001-so-fast-in-python-3)
+
+**2046 Votes**, Rick supports Monica
+
+The Python 3 `range()` object doesn't produce numbers immediately; it is a smart sequence object that produces numbers on demand. All it contains is your start, stop and step values, then as you iterate over the object the next integer is calculated each iteration.
+The object also implements the `object.__contains__` hook, and calculates if your number is part of its range. Calculating is a (near) constant time operation *. There is never a need to scan through all possible integers in the range.
+From the `range()` object documentation:
+
+The advantage of the `range` type over a regular `list` or `tuple` is that a range object will always take the same (small) amount of memory, no matter the size of the range it represents (as it only stores the `start`, `stop` and `step` values, calculating individual items and subranges as needed).
+
+So at a minimum, your `range()` object would do:
+
+```python
+class my_range(object):
+    def __init__(self, start, stop=None, step=1):
+        if stop is None:
+            start, stop = 0, start
+        self.start, self.stop, self.step = start, stop, step
+        if step < 0:
+            lo, hi, step = stop, start, -step
+        else:
+            lo, hi = start, stop
+        self.length = 0 if lo > hi else ((hi - lo - 1) // step) + 1
+
+    def __iter__(self):
+        current = self.start
+        if self.step < 0:
+            while current > self.stop:
+                yield current
+                current += self.step
+        else:
+            while current < self.stop:
+                yield current
+                current += self.step
+
+    def __len__(self):
+        return self.length
+
+    def __getitem__(self, i):
+        if i < 0:
+            i += self.length
+        if 0 <= i < self.length:
+            return self.start + i * self.step
+        raise IndexError('Index out of range: {}'.format(i))
+
+    def __contains__(self, num):
+        if self.step < 0:
+            if not (self.stop < num <= self.start):
+                return False
+        else:
+            if not (self.start <= num < self.stop):
+                return False
+        return (num - self.start) % self.step == 0
+```
+
+This is still missing several things that a real `range()` supports (such as the `.index()` or `.count()` methods, hashing, equality testing, or slicing), but should give you an idea.
+I also simplified the `__contains__` implementation to only focus on integer tests; if you give a real `range()` object a non-integer value (including subclasses of `int`), a slow scan is initiated to see if there is a match, just as if you use a containment test against a list of all the contained values. This was done to continue to support other numeric types that just happen to support equality testing with integers but are not expected to support integer arithmetic as well. See the original Python issue that implemented the containment test.
+
+* Near constant time because Python integers are unbounded and so math operations also grow in time as N grows, making this a O(log N) operation. Since its all executed in optimised C code and Python stores integer values in 30-bit chunks, youd run out of memory before you saw any performance impact due to the size of the integers involved here.
+
+## [How to access environment variable values?](https://stackoverflow.com/questions/4906977/how-to-access-environment-variable-values)
+
+**2046 Votes**, Amit Yadav
+
+Environment variables are accessed through os.environ
+
+```python
+import os
+print(os.environ['HOME'])
+```
+
+Or you can see a list of all the environment variables using:
+
+```python
+os.environ
+```
+
+As sometimes you might need to see a complete list!
+
+```python
+# using get will return `None` if a key is not present rather than raise a `KeyError`
+print(os.environ.get('KEY_THAT_MIGHT_EXIST'))
+
+# os.getenv is equivalent, and can also give a default value instead of `None`
+print(os.getenv('KEY_THAT_MIGHT_EXIST', default_value))
+```
+
+Python default installation on Windows is `C:\Python`. If you want to find out while running python you can do:
+
+```python
+import sys
+print(sys.prefix)
+```
+
+## [How to read a file line-by-line into a list?](https://stackoverflow.com/questions/3277503/how-to-read-a-file-line-by-line-into-a-list)
+
+**2028 Votes**, Julie Raswick
+
+```python
+with open(filename) as f:
+    content = f.readlines()
+# you may also want to remove whitespace characters like `\n` at the end of each line
+content = [x.strip() for x in content] 
+```
+
+## [How do I lowercase a string in Python?](https://stackoverflow.com/questions/6797984/how-do-i-lowercase-a-string-in-python)
+
+**2015 Votes**, Benjamin Didur
+
+Use `.lower()` - For example:
+
+```python
+s = "Kilometer"
+print(s.lower())
+```
+
+The official 2.x documentation is here: `str.lower()`
+The official 3.x documentation is here: `str.lower()`
